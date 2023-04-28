@@ -1,0 +1,1090 @@
+ 
+ 1          OPTIONS NONOTES NOSTIMER NOSOURCE NOSYNTAXCHECK;
+ NOTE: ODS statements in the SAS Studio environment may disable some output features.
+ 69         
+ 70         proc freq data=sasfile.adsl;
+ 71         where saffl="Y";
+ 72         table trt01an/norow nocol nopercent nocum out=bign (drop=percent rename=(count=denom));
+ 73         run;
+ 
+ NOTE: There were 65 observations read from the data set SASFILE.ADSL.
+       WHERE saffl='Y';
+ NOTE: The data set WORK.BIGN has 2 observations and 2 variables.
+ NOTE: PROCEDURE FREQ used (Total process time):
+       real time           0.01 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.00 seconds
+       memory              1996.75k
+       OS Memory           25260.00k
+       Timestamp           03/09/2023 10:33:14 AM
+       Step Count                        223  Switch Count  4
+       Page Faults                       0
+       Page Reclaims                     238
+       Page Swaps                        0
+       Voluntary Context Switches        30
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           536
+       
+ 
+ 74         
+ 75         DATA adae;
+ 76         set sasfile.adae;
+ 77         where SAFFL="Y" and trtem="Y";
+ 78         RUN;
+ 
+ NOTE: There were 534 observations read from the data set SASFILE.ADAE.
+       WHERE (SAFFL='Y') and (trtem='Y');
+ NOTE: The data set WORK.ADAE has 534 observations and 68 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.01 seconds
+       memory              3437.40k
+       OS Memory           27816.00k
+       Timestamp           03/09/2023 10:33:14 AM
+       Step Count                        224  Switch Count  7
+       Page Faults                       0
+       Page Reclaims                     575
+       Page Swaps                        0
+       Voluntary Context Switches        29
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           2568
+       
+ 
+ 79         
+ 80         Proc sort data=adae out=_adae1 nodupkey;
+ 81         by USUBJID AETOXGR;
+ 82         RUN;
+ 
+ NOTE: There were 534 observations read from the data set WORK.ADAE.
+ NOTE: 425 observations with duplicate key values were deleted.
+ NOTE: The data set WORK._ADAE1 has 109 observations and 68 variables.
+ NOTE: PROCEDURE SORT used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              4709.34k
+       OS Memory           28604.00k
+       Timestamp           03/09/2023 10:33:14 AM
+       Step Count                        225  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     607
+       Page Swaps                        0
+       Voluntary Context Switches        9
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           792
+       
+ 
+ 83         
+ 84         /*all grade */;
+ 85         
+ 86         data adae1;
+ 87         set _adae1;
+ 88         by USUBJID AETOXGR;
+ 89         if last.USUBJID;
+ 90         RUN;
+ 
+ NOTE: There were 109 observations read from the data set WORK._ADAE1.
+ NOTE: The data set WORK.ADAE1 has 59 observations and 68 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.00 seconds
+       memory              1636.34k
+       OS Memory           25640.00k
+       Timestamp           03/09/2023 10:33:14 AM
+       Step Count                        226  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     156
+       Page Swaps                        0
+       Voluntary Context Switches        9
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           520
+       
+ 
+ 91         
+ 92         proc freq data=adae1;
+ 93         table trt01an/norow nocol nopercent nocum out=frq1 (drop=percent);
+ 94         run;
+ 
+ NOTE: There were 59 observations read from the data set WORK.ADAE1.
+ NOTE: The data set WORK.FRQ1 has 2 observations and 2 variables.
+ NOTE: PROCEDURE FREQ used (Total process time):
+       real time           0.01 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.01 seconds
+       memory              1522.93k
+       OS Memory           25772.00k
+       Timestamp           03/09/2023 10:33:14 AM
+       Step Count                        227  Switch Count  4
+       Page Faults                       0
+       Page Reclaims                     190
+       Page Swaps                        0
+       Voluntary Context Switches        23
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           528
+       
+ 
+ 95         
+ 96         /*individual grade */;
+ 97         
+ 98         proc freq data=_adae1;
+ 99         table trt01an*AETOXGR/norow nocol nopercent nocum out=frq2 (drop=percent);
+ 100        run;
+ 
+ NOTE: There were 109 observations read from the data set WORK._ADAE1.
+ NOTE: The data set WORK.FRQ2 has 7 observations and 3 variables.
+ NOTE: PROCEDURE FREQ used (Total process time):
+       real time           0.02 seconds
+       user cpu time       0.02 seconds
+       system cpu time     0.00 seconds
+       memory              1914.00k
+       OS Memory           26160.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        228  Switch Count  6
+       Page Faults                       0
+       Page Reclaims                     308
+       Page Swaps                        0
+       Voluntary Context Switches        38
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           792
+       
+ 
+ 101        
+ 102        Proc sort data=adae out=_adae3 nodupkey;
+ 103        by USUBJID AEBODSYS AETOXGR;
+ 104        RUN;
+ 
+ NOTE: There were 534 observations read from the data set WORK.ADAE.
+ NOTE: 199 observations with duplicate key values were deleted.
+ NOTE: The data set WORK._ADAE3 has 335 observations and 68 variables.
+ NOTE: PROCEDURE SORT used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.00 seconds
+       memory              4710.93k
+       OS Memory           28604.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        229  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     634
+       Page Swaps                        0
+       Voluntary Context Switches        13
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           1808
+       
+ 
+ 105        
+ 106        /*all grade */;
+ 107        
+ 108        data adae3;
+ 109        set _adae3;
+ 110        by USUBJID AEBODSYS AETOXGR;
+ 111        if last.AEBODSYS;
+ 112        RUN;
+ 
+ NOTE: There were 335 observations read from the data set WORK._ADAE3.
+ NOTE: The data set WORK.ADAE3 has 265 observations and 68 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              2725.96k
+       OS Memory           26152.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        230  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     266
+       Page Swaps                        0
+       Voluntary Context Switches        9
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           1288
+       
+ 
+ 113        
+ 114        proc freq data=adae3 noprint;
+ 115        table trt01an*AEBODSYS/norow nocol nopercent nocum out=frq3 (drop=percent);
+ 116        run;
+ 
+ NOTE: There were 265 observations read from the data set WORK.ADAE3.
+ NOTE: The data set WORK.FRQ3 has 39 observations and 3 variables.
+ NOTE: PROCEDURE FREQ used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.01 seconds
+       memory              2518.84k
+       OS Memory           26936.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        231  Switch Count  10
+       Page Faults                       0
+       Page Reclaims                     476
+       Page Swaps                        0
+       Voluntary Context Switches        46
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           1320
+       
+ 
+ 117        
+ 118        proc freq data=_adae3 noprint;
+ 119        table trt01an*AEBODSYS*AETOXGR/norow nocol nopercent nocum out=frq4 (drop=percent);
+ 120        run;
+ 
+ NOTE: There were 335 observations read from the data set WORK._ADAE3.
+ NOTE: The data set WORK.FRQ4 has 72 observations and 4 variables.
+ NOTE: PROCEDURE FREQ used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              2781.78k
+       OS Memory           27192.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        232  Switch Count  10
+       Page Faults                       0
+       Page Reclaims                     542
+       Page Swaps                        0
+       Voluntary Context Switches        46
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           1320
+       
+ 
+ 121        
+ 122        Proc sort data=adae out=_adae5 nodupkey;
+ 123        by USUBJID AEBODSYS AEDECOD AETOXGR;
+ 124        RUN;
+ 
+ NOTE: There were 534 observations read from the data set WORK.ADAE.
+ NOTE: 58 observations with duplicate key values were deleted.
+ NOTE: The data set WORK._ADAE5 has 476 observations and 68 variables.
+ NOTE: PROCEDURE SORT used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              4782.59k
+       OS Memory           28604.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        233  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     731
+       Page Swaps                        0
+       Voluntary Context Switches        9
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           2320
+       
+ 
+ 125        
+ 126        /*all grade */;
+ 127        
+ 128        data adae5;
+ 129        set _adae5;
+ 130        by USUBJID AEBODSYS AEDECOD AETOXGR;
+ 131        if last.AEDECOD;
+ 132        RUN;
+ 
+ NOTE: There were 476 observations read from the data set WORK._ADAE5.
+ NOTE: The data set WORK.ADAE5 has 429 observations and 68 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.00 seconds
+       memory              3543.71k
+       OS Memory           27304.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        234  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     465
+       Page Swaps                        0
+       Voluntary Context Switches        9
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           2312
+       
+ 
+ 133        
+ 134        proc freq data=adae5 noprint;
+ 135        table trt01an*AEBODSYS*AEDECOD/norow nocol nopercent nocum out=frq5 (drop=percent);
+ 136        run;
+ 
+ NOTE: There were 429 observations read from the data set WORK.ADAE5.
+ NOTE: The data set WORK.FRQ5 has 202 observations and 4 variables.
+ NOTE: PROCEDURE FREQ used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              3117.56k
+       OS Memory           27320.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        235  Switch Count  10
+       Page Faults                       0
+       Page Reclaims                     562
+       Page Swaps                        0
+       Voluntary Context Switches        46
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           1320
+       
+ 
+ 137        
+ 138        proc freq data=_adae5 noprint;
+ 139        table trt01an*AEBODSYS*AEDECOD*AETOXGR/norow nocol nopercent nocum out=frq6 (drop=percent);
+ 140        run;
+ 
+ NOTE: There were 476 observations read from the data set WORK._ADAE5.
+ NOTE: The data set WORK.FRQ6 has 257 observations and 5 variables.
+ NOTE: PROCEDURE FREQ used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.00 seconds
+       memory              3151.25k
+       OS Memory           27320.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        236  Switch Count  10
+       Page Faults                       0
+       Page Reclaims                     557
+       Page Swaps                        0
+       Voluntary Context Switches        45
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           1320
+       
+ 
+ 141        
+ 142        proc freq data=_adae5 noprint;
+ 143        table AEBODSYS*AEDECOD/norow nocol nopercent nocum out=ord2 (drop=percent);
+ 144        run;
+ 
+ NOTE: There were 476 observations read from the data set WORK._ADAE5.
+ NOTE: The data set WORK.ORD2 has 153 observations and 3 variables.
+ NOTE: PROCEDURE FREQ used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.01 seconds
+       memory              3115.34k
+       OS Memory           27320.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        237  Switch Count  10
+       Page Faults                       0
+       Page Reclaims                     562
+       Page Swaps                        0
+       Voluntary Context Switches        45
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           1328
+       
+ 
+ 145        
+ 146        proc sort data=ord2;
+ 147        by AEBODSYS descending count;
+ 148        run;
+ 
+ NOTE: There were 153 observations read from the data set WORK.ORD2.
+ NOTE: The data set WORK.ORD2 has 153 observations and 3 variables.
+ NOTE: PROCEDURE SORT used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.00 seconds
+       memory              1026.31k
+       OS Memory           25512.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        238  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     101
+       Page Swaps                        0
+       Voluntary Context Switches        9
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 149        
+ 150        data ord2(drop=count);
+ 151        set ord2;
+ 152        by AEBODSYS descending count;
+ 153        if first.AEBODSYS then order2=2;
+ 154        else order2+1;
+ 155        run;
+ 
+ NOTE: There were 153 observations read from the data set WORK.ORD2.
+ NOTE: The data set WORK.ORD2 has 153 observations and 3 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              1142.15k
+       OS Memory           25512.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        239  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     116
+       Page Swaps                        0
+       Voluntary Context Switches        9
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 156        
+ 157        %macro addvar(indata=,val=);
+ 158        data &indata.;
+ 159        set &indata.;
+ 160        m=&val.;
+ 161        run;
+ 162        %mend addvar;
+ 163        
+ 164        %addvar(indata=frq1, val=1);
+ 
+ NOTE: There were 2 observations read from the data set WORK.FRQ1.
+ NOTE: The data set WORK.FRQ1 has 2 observations and 3 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              941.09k
+       OS Memory           25512.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        240  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     133
+       Page Swaps                        0
+       Voluntary Context Switches        9
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 165        %addvar(indata=frq2, val=2);
+ 
+ NOTE: There were 7 observations read from the data set WORK.FRQ2.
+ NOTE: The data set WORK.FRQ2 has 7 observations and 4 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              1054.12k
+       OS Memory           25512.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        241  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     130
+       Page Swaps                        0
+       Voluntary Context Switches        9
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 166        %addvar(indata=frq3, val=3);
+ 
+ NOTE: There were 39 observations read from the data set WORK.FRQ3.
+ NOTE: The data set WORK.FRQ3 has 39 observations and 4 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              941.53k
+       OS Memory           25512.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        242  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     129
+       Page Swaps                        0
+       Voluntary Context Switches        9
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 167        %addvar(indata=frq4, val=4);
+ 
+ NOTE: There were 72 observations read from the data set WORK.FRQ4.
+ NOTE: The data set WORK.FRQ4 has 72 observations and 5 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              942.53k
+       OS Memory           25512.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        243  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     126
+       Page Swaps                        0
+       Voluntary Context Switches        9
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 168        %addvar(indata=frq5, val=5);
+ 
+ NOTE: There were 202 observations read from the data set WORK.FRQ5.
+ NOTE: The data set WORK.FRQ5 has 202 observations and 5 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.00 seconds
+       memory              942.53k
+       OS Memory           25512.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        244  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     109
+       Page Swaps                        0
+       Voluntary Context Switches        9
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 169        %addvar(indata=frq6, val=6);
+ 
+ NOTE: There were 257 observations read from the data set WORK.FRQ6.
+ NOTE: The data set WORK.FRQ6 has 257 observations and 6 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              941.78k
+       OS Memory           25512.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        245  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     103
+       Page Swaps                        0
+       Voluntary Context Switches        9
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 170        
+ 171        data all;
+ 172        length col1 $70;
+ 173        set frq1(in=a1) frq2(in=a2) frq3(in=b1) frq4(in=b2) frq5(in=c1) frq6(in=c2);
+ 174        by m;
+ 175        if a1 or a2 then do;
+ 176        col1="- Any adverse events -";
+ 177        AEBODSYS="Any Adverse Events";
+ 178        AEDECOD="Any Adverse Events";
+ 179        end;
+ 180        else if b1 or b2 then do;
+ 181        col1="  - Overall -";
+ 182        AEDECOD="Any Adverse Events";
+ 183        end;
+ 184        else if c1 or c2 then col1="   "||strip(AEDECOD);
+ 185        if a1 or a2 then section=1;
+ 186        else section=2;
+ 187        if AETOXGR="" then col2=6;
+ 188        if a1 or b1 or c1 then col2=0;
+ 189        else col2=input(AETOXGR, best.);
+ 190        run;
+ 
+ NOTE: There were 2 observations read from the data set WORK.FRQ1.
+ NOTE: There were 7 observations read from the data set WORK.FRQ2.
+ NOTE: There were 39 observations read from the data set WORK.FRQ3.
+ NOTE: There were 72 observations read from the data set WORK.FRQ4.
+ NOTE: There were 202 observations read from the data set WORK.FRQ5.
+ NOTE: There were 257 observations read from the data set WORK.FRQ6.
+ NOTE: The data set WORK.ALL has 579 observations and 9 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.01 seconds
+       memory              3314.18k
+       OS Memory           27836.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        246  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     417
+       Page Swaps                        0
+       Voluntary Context Switches        10
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           784
+       
+ 
+ 191        
+ 192        proc sort data=all;
+ 193        by AEBODSYS AEDECOD;
+ 194        run;
+ 
+ NOTE: There were 579 observations read from the data set WORK.ALL.
+ NOTE: The data set WORK.ALL has 579 observations and 9 variables.
+ NOTE: PROCEDURE SORT used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.00 seconds
+       memory              2435.34k
+       OS Memory           27700.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        247  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     222
+       Page Swaps                        0
+       Voluntary Context Switches        9
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           776
+       
+ 
+ 195        
+ 196        proc sort data=ord2;
+ 197        by AEBODSYS AEDECOD;
+ 198        run;
+ 
+ NOTE: There were 153 observations read from the data set WORK.ORD2.
+ NOTE: The data set WORK.ORD2 has 153 observations and 3 variables.
+ NOTE: PROCEDURE SORT used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              1098.59k
+       OS Memory           26536.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        248  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     103
+       Page Swaps                        0
+       Voluntary Context Switches        9
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 199        
+ 200        data all1;
+ 201        length col1 $70.;
+ 202        merge all ord2;
+ 203        by AEBODSYS AEDECOD;
+ 204        if section=2 and compress(col1)="-Overall-" then order2=1;
+ 205        if section=1 then order2=-1;
+ 206        run;
+ 
+ NOTE: There were 579 observations read from the data set WORK.ALL.
+ NOTE: There were 153 observations read from the data set WORK.ORD2.
+ NOTE: The data set WORK.ALL1 has 579 observations and 10 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              2161.56k
+       OS Memory           26924.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        249  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     173
+       Page Swaps                        0
+       Voluntary Context Switches        9
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           784
+       
+ 
+ 207        
+ 208        proc sort data=all1;
+ 209        by trt01an;
+ 210        run;
+ 
+ NOTE: There were 579 observations read from the data set WORK.ALL1.
+ NOTE: The data set WORK.ALL1 has 579 observations and 10 variables.
+ NOTE: PROCEDURE SORT used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.00 seconds
+       memory              1863.09k
+       OS Memory           27184.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        250  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     167
+       Page Swaps                        0
+       Voluntary Context Switches        9
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           776
+       
+ 
+ 211        
+ 212        data final;
+ 213        length perc $8 result $16;
+ 214        merge all1 bign;
+ 215        by trt01an;
+ 216        perc=put(((count/denom)*100),8.1);
+ 217        result=strip(put(count,8.))||" ("||strip(perc)||"%)";
+ 218        run;
+ 
+ NOTE: There were 579 observations read from the data set WORK.ALL1.
+ NOTE: There were 2 observations read from the data set WORK.BIGN.
+ NOTE: The data set WORK.FINAL has 579 observations and 13 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              2158.31k
+       OS Memory           26924.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        251  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     170
+       Page Swaps                        0
+       Voluntary Context Switches        9
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           776
+       
+ 
+ 219        
+ 220        proc sort data=final;
+ 221        BY section AEBODSYS order2 col1 col2 AEDECOD;
+ 222        RUN;
+ 
+ NOTE: There were 579 observations read from the data set WORK.FINAL.
+ NOTE: The data set WORK.FINAL has 579 observations and 13 variables.
+ NOTE: PROCEDURE SORT used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              2451.25k
+       OS Memory           27700.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        252  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     242
+       Page Swaps                        0
+       Voluntary Context Switches        9
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           776
+       
+ 
+ 223        
+ 224        PROC TRANSPOSE data=final out=final_t(drop=_name_) prefix=tt_ac;
+ 225        BY section AEBODSYS order2 col1 col2 AEDECOD;
+ 226        ID TRT01An;
+ 227        VAR result;
+ 228        RUN;
+ 
+ NOTE: There were 579 observations read from the data set WORK.FINAL.
+ NOTE: The data set WORK.FINAL_T has 432 observations and 8 variables.
+ NOTE: PROCEDURE TRANSPOSE used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              3106.75k
+       OS Memory           28716.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        253  Switch Count  7
+       Page Faults                       0
+       Page Reclaims                     192
+       Page Swaps                        0
+       Voluntary Context Switches        26
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           792
+       
+ 
+ 229        
+ 230        data final_t2;
+ 231        set final_t;
+ 232        BY section AEBODSYS;
+ 233        output;
+ 234        if section=2 and first.AEBODSYS then do;
+ 235        col1=upcase(AEBODSYS);
+ 236        order2=0;
+ 237        tt_ac0="";
+ 238        tt_ac1="";
+ 239        col2=.;
+ 240        output;
+ 241        end;
+ 242        run;
+ 
+ NOTE: There were 432 observations read from the data set WORK.FINAL_T.
+ NOTE: The data set WORK.FINAL_T2 has 454 observations and 8 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              1511.18k
+       OS Memory           26536.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        254  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     103
+       Page Swaps                        0
+       Voluntary Context Switches        9
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           520
+       
+ 
+ 243        
+ 244        proc sort data=final_t2 out=allsoc(keep=section AEBODSYS order2 col1 col2 AEDECOD) nodupkey;
+ 245        where order2 ne 0;
+ 246        by AEBODSYS AEDECOD;
+ 247        run;
+ 
+ NOTE: There were 432 observations read from the data set WORK.FINAL_T2.
+       WHERE order2 not = 0;
+ NOTE: 256 observations with duplicate key values were deleted.
+ NOTE: The data set WORK.ALLSOC has 176 observations and 6 variables.
+ NOTE: PROCEDURE SORT used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.01 seconds
+       memory              2326.56k
+       OS Memory           27832.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        255  Switch Count  5
+       Page Faults                       0
+       Page Reclaims                     203
+       Page Swaps                        0
+       Voluntary Context Switches        17
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           272
+       
+ 
+ 248        
+ 249        data dummy (drop=i);
+ 250        set allsoc;
+ 251        do i=1 to 5;
+ 252        col2=i;
+ 253        output;
+ 254        end;
+ 255        run;
+ 
+ NOTE: There were 176 observations read from the data set WORK.ALLSOC.
+ NOTE: The data set WORK.DUMMY has 880 observations and 6 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.00 seconds
+       memory              1569.56k
+       OS Memory           26536.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        256  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     99
+       Page Swaps                        0
+       Voluntary Context Switches        9
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           1032
+       
+ 
+ 256        
+ 257        proc sort data=dummy;
+ 258        BY AEBODSYS AEDECOD order2 col1 col2;
+ 259        RUN;
+ 
+ NOTE: There were 880 observations read from the data set WORK.DUMMY.
+ NOTE: The data set WORK.DUMMY has 880 observations and 6 variables.
+ NOTE: PROCEDURE SORT used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              2574.56k
+       OS Memory           27828.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        257  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     338
+       Page Swaps                        0
+       Voluntary Context Switches        9
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           1032
+       
+ 
+ 260        
+ 261        proc sort data=final_t2;
+ 262        BY AEBODSYS AEDECOD order2 col1 col2;
+ 263        RUN;
+ 
+ NOTE: There were 454 observations read from the data set WORK.FINAL_T2.
+ NOTE: The data set WORK.FINAL_T2 has 454 observations and 8 variables.
+ NOTE: PROCEDURE SORT used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              2209.00k
+       OS Memory           27572.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        258  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     173
+       Page Swaps                        0
+       Voluntary Context Switches        11
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           520
+       
+ 
+ 264        
+ 265        data qc (drop=AEDECOD);
+ 266        merge final_t2 dummy;
+ 267        BY AEBODSYS AEDECOD order2 col1 col2;
+ 268        if section=1 or (section=2 and col2^=.) then do;
+ 269        if tt_ac0=" " then tt_ac0="(0.0%)";
+ 270        if tt_ac1=" " then tt_ac1="(0.0%)";
+ 271        end;
+ 272        RUN;
+ 
+ NOTE: There were 454 observations read from the data set WORK.FINAL_T2.
+ NOTE: There were 880 observations read from the data set WORK.DUMMY.
+ NOTE: The data set WORK.QC has 1078 observations and 7 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.00 seconds
+       memory              2312.06k
+       OS Memory           27052.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        259  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     204
+       Page Swaps                        0
+       Voluntary Context Switches        11
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           776
+       
+ 
+ 273        
+ 274        proc format;
+ 275        
+ 275      !  value gradef
+ 276        0="All grades"
+ 277        1="1"
+ 278        2="2"
+ 279        3="3"
+ 280        4="4"
+ 281        5="5"
+ 282        6="Not graded"
+ 283        .=" "
+ 284        ;
+ NOTE: Format GRADEF is already on the library WORK.FORMATS.
+ NOTE: Format GRADEF has been output.
+ 285        run;
+ 
+ NOTE: PROCEDURE FORMAT used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              467.90k
+       OS Memory           26016.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        260  Switch Count  0
+       Page Faults                       0
+       Page Reclaims                     15
+       Page Swaps                        0
+       Voluntary Context Switches        0
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           32
+       
+ 
+ 286        
+ 287        proc sort data=qc out=t_14_3_2;
+ 288        BY section AEBODSYS order2 col1 col2;
+ 289        RUN;
+ 
+ NOTE: There were 1078 observations read from the data set WORK.QC.
+ NOTE: The data set WORK.T_14_3_2 has 1078 observations and 7 variables.
+ NOTE: PROCEDURE SORT used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              2637.40k
+       OS Memory           27960.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        261  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     292
+       Page Swaps                        0
+       Voluntary Context Switches        9
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           784
+       
+ 
+ 290        
+ 291        proc report data=t_14_3_2 nowd headline headskip;
+ 292        title "Table 14.3/2";
+ 293        title2 "Patients with Treatment-Emergent Adverse Events by Highest NCI CTCAE Grade";
+ 294        title3 "Safety-Evaluable Patients";
+ 295        columns section AEBODSYS order2 col1 col2 tt_ac0 tt_ac1;
+ 296        define section /order order=data noprint;
+ 297        define AEBODSYS /order order=data noprint width=1;
+ 298        define order2 /order order=data noprint;
+ 299        define col1 /group width=35 flow "MedDRA System Organ Class and / Preferred Term";
+ 300        define col2/ flow "NCI-CTCAE / Grade" format=gradef. center;
+ 301        define tt_ac0 / flow "Placebo / (n=32)" left;
+ 302        define tt_ac1 / flow "CMP-135 / (n=35)" left;
+ 303        break after order2 / skip;
+ 304        compute after _page_;
+ 305        line @27 80*'_';
+ 306        endcomp;
+ 307        run;
+ 
+ NOTE: Groups are not created because the usage of tt_ac0 is DISPLAY. To avoid this note, change all GROUP variables to ORDER 
+ variables.
+ NOTE: There were 1078 observations read from the data set WORK.T_14_3_2.
+ NOTE: PROCEDURE REPORT used (Total process time):
+       real time           0.70 seconds
+       user cpu time       0.70 seconds
+       system cpu time     0.01 seconds
+       memory              8087.04k
+       OS Memory           31792.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        262  Switch Count  4
+       Page Faults                       0
+       Page Reclaims                     1587
+       Page Swaps                        0
+       Voluntary Context Switches        59
+       Involuntary Context Switches      1
+       Block Input Operations            0
+       Block Output Operations           272
+       
+ 
+ 308        
+ 309        proc printto;
+ 310        run;
+ 
+ NOTE: PROCEDURE PRINTTO used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              278.37k
+       OS Memory           26272.00k
+       Timestamp           03/09/2023 10:33:15 AM
+       Step Count                        263  Switch Count  0
+       Page Faults                       0
+       Page Reclaims                     15
+       Page Swaps                        0
+       Voluntary Context Switches        0
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           0
+       
+ 
+ 311        
+ 312        
+ 313        
+ 314        
+ 315        
+ 316        
+ 317        
+ 318        
+ 319        OPTIONS NONOTES NOSTIMER NOSOURCE NOSYNTAXCHECK;
+ 329        

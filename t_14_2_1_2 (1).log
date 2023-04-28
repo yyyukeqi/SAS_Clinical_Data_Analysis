@@ -1,0 +1,164 @@
+ 
+ 1          OPTIONS NONOTES NOSTIMER NOSOURCE NOSYNTAXCHECK;
+ NOTE: ODS statements in the SAS Studio environment may disable some output features.
+ 69         
+ 70         proc sort data=sasfile.adsl out=adsl;
+ 71         by usubjid;
+ 72         where ittfl='Y';
+ 73         run;
+ 
+ NOTE: There were 65 observations read from the data set SASFILE.ADSL.
+       WHERE ittfl='Y';
+ NOTE: The data set WORK.ADSL has 65 observations and 63 variables.
+ NOTE: PROCEDURE SORT used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              1320.18k
+       OS Memory           23984.00k
+       Timestamp           03/14/2023 05:37:57 AM
+       Step Count                        274  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     133
+       Page Swaps                        0
+       Voluntary Context Switches        14
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           272
+       
+ 
+ 74         
+ 75         proc sort data=sasfile.adtte out=adtte;
+ 76         by usubjid;
+ 77         where paramcd="TTPFS";
+ 78         run;
+ 
+ NOTE: There were 65 observations read from the data set SASFILE.ADTTE.
+       WHERE paramcd='TTPFS';
+ NOTE: The data set WORK.ADTTE has 65 observations and 48 variables.
+ NOTE: PROCEDURE SORT used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              1696.59k
+       OS Memory           24244.00k
+       Timestamp           03/14/2023 05:37:57 AM
+       Step Count                        275  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     141
+       Page Swaps                        0
+       Voluntary Context Switches        15
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           272
+       
+ 
+ 79         
+ 80         DATA adtte1;
+ 81         merge adsl(in=a) adtte(in=b);
+ 82         by usubjid;
+ 83         if a;
+ 84         keep usubjid param paramcd cnsr trt: ittfl aval;
+ 85         run;
+ 
+ NOTE: There were 65 observations read from the data set WORK.ADSL.
+ NOTE: There were 65 observations read from the data set WORK.ADTTE.
+ NOTE: The data set WORK.ADTTE1 has 65 observations and 19 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.00 seconds
+       memory              1521.12k
+       OS Memory           23984.00k
+       Timestamp           03/14/2023 05:37:57 AM
+       Step Count                        276  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     168
+       Page Swaps                        0
+       Voluntary Context Switches        10
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 86         
+ 87         
+ 88         ods listing gpath="/home/u63099160/New Folder2/";
+ 89         ods output Survivalplot=SurvivalPlotData;
+ 90         ods graphics on;
+ 91         proc lifetest data=adtte1 plots=(survival(atrisk=0 to 15 by 3));
+ 92         time aval*cnsr(1);
+ 93         strata trtp / test=logrank adjust=sidak;
+ 94         run;
+ 
+ NOTE: The LOGLOG transform is used to compute the confidence limits for the quartiles of the survivor distribution. To suppress 
+       using this transform, specify CONFTYPE=LINEAR in the PROC LIFETEST statement.
+ NOTE: The data set WORK.SURVIVALPLOTDATA has 74 observations and 8 variables.
+ NOTE: The PROCEDURE LIFETEST printed pages 6-10.
+ NOTE: PROCEDURE LIFETEST used (Total process time):
+       real time           0.36 seconds
+       user cpu time       0.25 seconds
+       system cpu time     0.01 seconds
+       memory              18577.43k
+       OS Memory           40256.00k
+       Timestamp           03/14/2023 05:37:58 AM
+       Step Count                        277  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     4669
+       Page Swaps                        0
+       Voluntary Context Switches        516
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           1200
+       
+ 
+ 95         
+ 96         ods listing style=htmlblue;
+ 97         ods graphics / reset width=5in height=3in imagename="Survival_Plot_SG";
+ 98         ods graphics off;
+ 99         
+ 100        footnote1 justify=left h=8pt italic "Study PRJ5457C";
+ 101        footnote2 justify=left h=8pt italic "TLG Specifications, Version 9.4";
+ 102        footnote3 justify=right h=8pt italic "Page 1 of 1";
+ 103        proc sgplot data=SurvivalPlotData noborder;
+ 104        title1 "Kaplan Meier Curves for Progression Free Survival by Treatment Arm in Second Remission";
+ 105        title2 "Randomized Sujects with 2nd Remission";
+ 106        step x=time y=survival / group=stratum name="s";
+ 107        styleattrs datacontrastcolors=(red blue);
+ 108        xaxis values=(0 to 15 by 3) labelpos=center label="Time to Progression(month)" labelattrs=(weight=bold);
+ 109        yaxis labelpos=center label="Progression-Free Rate" labelattrs=(weight=bold);
+ 110        scatter x=time y=censored / MARKERATTRS=(symbol=plus) name="c";
+ 111        scatter x=time y=censored / MARKERATTRS=(symbol=plus) group=stratum colormodel=(blue red);
+ 112        xaxistable atrisk / x=tatrisk title="Number at Risk:" class=stratum colorgroup=stratum valueattrs=(weight=bold);
+ 113        keylegend "s" / linelength=20 location=inside position=bottomleft;
+ 114        inset "Median Time(mo)    5.8     7.7" "Hazard Ratio          0.730" "(95% CI)         (0.362,1.472)" "Log-rank p-value
+ 114      !     0.3857"
+ 115        / valuealign=left;
+ 116        run;
+ 
+ NOTE: PROCEDURE SGPLOT used (Total process time):
+       real time           0.18 seconds
+       user cpu time       0.07 seconds
+       system cpu time     0.01 seconds
+       memory              1898.62k
+       OS Memory           39216.00k
+       Timestamp           03/14/2023 05:37:58 AM
+       Step Count                        278  Switch Count  3
+       Page Faults                       0
+       Page Reclaims                     537
+       Page Swaps                        0
+       Voluntary Context Switches        479
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           560
+       
+ NOTE: Listing image output written to /home/u63099160/New Folder2/SGPlot.png.
+ NOTE: There were 74 observations read from the data set WORK.SURVIVALPLOTDATA.
+ 
+ 117        
+ 118        
+ 119        
+ 120        
+ 121        
+ 122        OPTIONS NONOTES NOSTIMER NOSOURCE NOSYNTAXCHECK;
+ 132        

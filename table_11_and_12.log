@@ -1,0 +1,342 @@
+ 
+ 1          OPTIONS NONOTES NOSTIMER NOSOURCE NOSYNTAXCHECK;
+ NOTE: ODS statements in the SAS Studio environment may disable some output features.
+ 69         
+ 70         PROC IMPORT datafile="/home/u63099160/New Folder2/ADEFF.xls"
+ 71         OUT = sasfile.ADEFF REPLACE
+ 72         DBMS=XLS;
+ 73         RUN;
+ 
+ NOTE: One or more variables were converted because the data type is not supported by the V9 engine. For more details, run with 
+       options MSGLEVEL=I.
+ NOTE: The import data set has 500 observations and 26 variables.
+ NOTE: SASFILE.ADEFF data set was successfully created.
+ NOTE: PROCEDURE IMPORT used (Total process time):
+       real time           0.02 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.01 seconds
+       memory              1995.90k
+       OS Memory           24220.00k
+       Timestamp           03/13/2023 03:03:09 AM
+       Step Count                        150  Switch Count  4
+       Page Faults                       0
+       Page Reclaims                     400
+       Page Swaps                        0
+       Voluntary Context Switches        50
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           520
+       
+ 
+ 74         
+ 75         DATA adeff;
+ 76         set sasfile.ADEFF;
+ 77         where PARAMCD="VLOAD" and ittfl="Y" and ANL01FL="Y";
+ 78         KEEP USUBJID AVISITN AVISITN_1 AVAL Trt01a trt01an Base CHG Param PARAMCD;
+ 79         RUN;
+ 
+ NOTE: There were 500 observations read from the data set SASFILE.ADEFF.
+       WHERE (PARAMCD='VLOAD') and (ittfl='Y') and (ANL01FL='Y');
+ NOTE: The data set WORK.ADEFF has 500 observations and 10 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              1161.25k
+       OS Memory           23464.00k
+       Timestamp           03/13/2023 03:03:09 AM
+       Step Count                        151  Switch Count  5
+       Page Faults                       0
+       Page Reclaims                     127
+       Page Swaps                        0
+       Voluntary Context Switches        29
+       Involuntary Context Switches      0
+       Block Input Operations            544
+       Block Output Operations           264
+       
+ 
+ 80         
+ 81         proc sort data=adeff;
+ 82         by AVISITN AVISITN_1 Trt01a;
+ 83         run;
+ 
+ NOTE: There were 500 observations read from the data set WORK.ADEFF.
+ NOTE: The data set WORK.ADEFF has 500 observations and 10 variables.
+ NOTE: PROCEDURE SORT used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.00 seconds
+       memory              933.50k
+       OS Memory           23464.00k
+       Timestamp           03/13/2023 03:03:09 AM
+       Step Count                        152  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     104
+       Page Swaps                        0
+       Voluntary Context Switches        11
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 84         
+ 85         proc means data=adeff n mean stderr maxdec=3 STACKODSOUTPUT;
+ 86         var AVAL;
+ 87         by AVISITN AVISITN_1 Trt01a;
+ 88         ods output summary=sta;
+ 89         RUN;
+ 
+ NOTE: The data set WORK.STA has 10 observations and 8 variables.
+ NOTE: There were 500 observations read from the data set WORK.ADEFF.
+ NOTE: PROCEDURE MEANS used (Total process time):
+       real time           0.06 seconds
+       user cpu time       0.06 seconds
+       system cpu time     0.00 seconds
+       memory              3008.78k
+       OS Memory           24492.00k
+       Timestamp           03/13/2023 03:03:09 AM
+       Step Count                        153  Switch Count  14
+       Page Faults                       0
+       Page Reclaims                     346
+       Page Swaps                        0
+       Voluntary Context Switches        51
+       Involuntary Context Switches      3
+       Block Input Operations            0
+       Block Output Operations           280
+       
+ 
+ 90         
+ 91         data summary;
+ 92         SET sta;
+ 93         'Mean (SE)'n=put(Mean, 5.3)||"("||put(StdErr, 5.3)||')';
+ 94         keep AVISITN_1 Trt01a N 'Mean (SE)'n;
+ 95         RUN;
+ 
+ NOTE: There were 10 observations read from the data set WORK.STA.
+ NOTE: The data set WORK.SUMMARY has 10 observations and 4 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              959.81k
+       OS Memory           23720.00k
+       Timestamp           03/13/2023 03:03:09 AM
+       Step Count                        154  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     126
+       Page Swaps                        0
+       Voluntary Context Switches        14
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 96         
+ 97         
+ 98         DATA adeff1;
+ 99         set ADEFF;
+ 100        where AVISITN_1 in ("Week 12", "Week 16");
+ 101        KEEP USUBJID AVISITN AVISITN_1 AVAL Trt01a trt01an Base CHG Param PARAMCD;
+ 102        RUN;
+ 
+ NOTE: There were 200 observations read from the data set WORK.ADEFF.
+       WHERE AVISITN_1 in ('Week 12', 'Week 16');
+ NOTE: The data set WORK.ADEFF1 has 200 observations and 10 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              985.84k
+       OS Memory           23720.00k
+       Timestamp           03/13/2023 03:03:09 AM
+       Step Count                        155  Switch Count  4
+       Page Faults                       0
+       Page Reclaims                     125
+       Page Swaps                        0
+       Voluntary Context Switches        22
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 103        
+ 104        proc sort data=adeff1;
+ 105        by AVISITN AVISITN_1 Trt01a;
+ 106        run;
+ 
+ NOTE: There were 200 observations read from the data set WORK.ADEFF1.
+ NOTE: The data set WORK.ADEFF1 has 200 observations and 10 variables.
+ NOTE: PROCEDURE SORT used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              927.28k
+       OS Memory           23720.00k
+       Timestamp           03/13/2023 03:03:09 AM
+       Step Count                        156  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     112
+       Page Swaps                        0
+       Voluntary Context Switches        13
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 107        
+ 108        proc freq data=adeff1;
+ 109        tables AVISITN_1*Trt01a /list out=freq;
+ 110        run;
+ 
+ NOTE: There were 200 observations read from the data set WORK.ADEFF1.
+ NOTE: The data set WORK.FREQ has 4 observations and 4 variables.
+ NOTE: PROCEDURE FREQ used (Total process time):
+       real time           0.01 seconds
+       user cpu time       0.02 seconds
+       system cpu time     0.00 seconds
+       memory              1963.09k
+       OS Memory           24760.00k
+       Timestamp           03/13/2023 03:03:09 AM
+       Step Count                        157  Switch Count  10
+       Page Faults                       0
+       Page Reclaims                     403
+       Page Swaps                        0
+       Voluntary Context Switches        50
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           1320
+       
+ 
+ 111        
+ 112        proc mixed data=adeff1;
+ 113        class AVISITN_1 Trt01a;
+ 114        model CHG=AVISITN_1*Trt01a;
+ 115        lsmeans AVISITN_1*Trt01a;
+ 116        ods output LSMeans=sta1;
+ 117        RUN;
+ 
+ NOTE: The data set WORK.STA1 has 4 observations and 8 variables.
+ NOTE: PROCEDURE MIXED used (Total process time):
+       real time           0.06 seconds
+       user cpu time       0.05 seconds
+       system cpu time     0.01 seconds
+       memory              1500.87k
+       OS Memory           23980.00k
+       Timestamp           03/13/2023 03:03:09 AM
+       Step Count                        158  Switch Count  5
+       Page Faults                       0
+       Page Reclaims                     229
+       Page Swaps                        0
+       Voluntary Context Switches        39
+       Involuntary Context Switches      1
+       Block Input Operations            0
+       Block Output Operations           544
+       
+ 
+ 118        
+ 119        data summary1;
+ 120        merge freq(keep=AVISITN_1 Trt01a count) sta1;
+ 121        by AVISITN_1 Trt01a;
+ 122        Estimate=abs(Estimate);
+ 123        'Mean (SE)'n=put(Estimate, 5.3)||"("||put(StdErr, 5.3)||')';
+ 124        keep AVISITN_1 Trt01a count 'Mean (SE)'n;
+ 125        RUN;
+ 
+ NOTE: There were 4 observations read from the data set WORK.FREQ.
+ NOTE: There were 4 observations read from the data set WORK.STA1.
+ NOTE: The data set WORK.SUMMARY1 has 4 observations and 4 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              1424.31k
+       OS Memory           23980.00k
+       Timestamp           03/13/2023 03:03:09 AM
+       Step Count                        159  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     169
+       Page Swaps                        0
+       Voluntary Context Switches        16
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 126        
+ 127        Proc report data=summary
+ 128        headline nowd headskip;
+ 129        title1 "Table 11";
+ 130        title2 'Summary of Viral Load Over Time';
+ 131        title3 "ITT Subjects";
+ 132        column AVISITN_1 Trt01a N 'Mean (SE)'n;
+ 133        define AVISITN_1 / group order=data 'Test / Day';
+ 134        define Trt01a / group 'Treatment';
+ 135        define N / display;
+ 136        define 'Mean (SE)'n / display "Unadjusted / Mean (SE)";
+ 137        compute after AVISITN_1;
+ 138        line @1 " ";
+ 139        endcomp;
+ 140        RUN;
+ 
+ NOTE: Groups are not created because the usage of N is DISPLAY. To avoid this note, change all GROUP variables to ORDER variables.
+ NOTE: There were 10 observations read from the data set WORK.SUMMARY.
+ NOTE: PROCEDURE REPORT used (Total process time):
+       real time           0.02 seconds
+       user cpu time       0.03 seconds
+       system cpu time     0.00 seconds
+       memory              8363.82k
+       OS Memory           30648.00k
+       Timestamp           03/13/2023 03:03:09 AM
+       Step Count                        160  Switch Count  4
+       Page Faults                       0
+       Page Reclaims                     1807
+       Page Swaps                        0
+       Voluntary Context Switches        51
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           8
+       
+ 
+ 141        
+ 142        Proc report data=summary1
+ 143        headline nowd headskip;
+ 144        title1 "Table 12";
+ 145        title2 'Summary of Adjusted Mean of Change from Baseline Viral Load at Week 12 and 16';
+ 146        title3 "ITT Population";
+ 147        column AVISITN_1 Trt01a count 'Mean (SE)'n;
+ 148        define AVISITN_1 / group order=data 'Test Day';
+ 149        define Trt01a / group 'Treatment';
+ 150        define count / display "N";
+ 151        define 'Mean (SE)'n / display "Adjusted Mean (SE)";
+ 152        compute after AVISITN_1;
+ 153        line @1 " ";
+ 154        endcomp;
+ 155        compute after;
+ 156        line @1 110*"_";
+ 157        line @1 "Adjusted mean is calculated using PROC MIXED stage as factor and treatment.";
+ 158        endcomp;
+ 159        RUN;
+ 
+ NOTE: Groups are not created because the usage of COUNT is DISPLAY. To avoid this note, change all GROUP variables to ORDER 
+ variables.
+ NOTE: There were 4 observations read from the data set WORK.SUMMARY1.
+ NOTE: PROCEDURE REPORT used (Total process time):
+       real time           0.02 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.01 seconds
+       memory              8263.29k
+       OS Memory           30904.00k
+       Timestamp           03/13/2023 03:03:09 AM
+       Step Count                        161  Switch Count  4
+       Page Faults                       0
+       Page Reclaims                     1613
+       Page Swaps                        0
+       Voluntary Context Switches        46
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           0
+       
+ 
+ 160        
+ 161        OPTIONS NONOTES NOSTIMER NOSOURCE NOSYNTAXCHECK;
+ 171        

@@ -1,0 +1,1295 @@
+ 
+ 1          OPTIONS NONOTES NOSTIMER NOSOURCE NOSYNTAXCHECK;
+ NOTE: ODS statements in the SAS Studio environment may disable some output features.
+ 69         
+ 70         PROC IMPORT datafile="/home/u63099160/New Folder2/ADRS.xls"
+ 71         OUT = sasfile.ADRS REPLACE
+ 72         DBMS=XLS;
+ 73         RUN;
+ 
+ NOTE: One or more variables were converted because the data type is not supported by the V9 engine. For more details, run with 
+       options MSGLEVEL=I.
+ NOTE: The import data set has 100 observations and 17 variables.
+ NOTE: SASFILE.ADRS data set was successfully created.
+ NOTE: PROCEDURE IMPORT used (Total process time):
+       real time           0.01 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.00 seconds
+       memory              1690.00k
+       OS Memory           29340.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1326  Switch Count  4
+       Page Faults                       0
+       Page Reclaims                     351
+       Page Swaps                        0
+       Voluntary Context Switches        55
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 74         
+ 75         DATA adrs;
+ 76         set sasfile.ADRS;
+ 77         where PARAMCD="BOR" and ittfl="Y";
+ 78         KEEP USUBJID PARAMCD param AVALC Trt01p trt01pn AGE AGEGR1 nereasn;
+ 79         RUN;
+ 
+ NOTE: There were 100 observations read from the data set SASFILE.ADRS.
+       WHERE (PARAMCD='BOR') and (ittfl='Y');
+ NOTE: The data set WORK.ADRS has 100 observations and 9 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              985.59k
+       OS Memory           28844.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1327  Switch Count  3
+       Page Faults                       0
+       Page Reclaims                     146
+       Page Swaps                        0
+       Voluntary Context Switches        23
+       Involuntary Context Switches      0
+       Block Input Operations            288
+       Block Output Operations           264
+       
+ 
+ 80         
+ 81         data adrs_age1 adrs_age2;
+ 82         set adrs;
+ 83         if agegr1="<65" then output adrs_age1;
+ 84         else if agegr1=">=65" then output adrs_age2;
+ 85         run;
+ 
+ NOTE: There were 100 observations read from the data set WORK.ADRS.
+ NOTE: The data set WORK.ADRS_AGE1 has 70 observations and 9 variables.
+ NOTE: The data set WORK.ADRS_AGE2 has 30 observations and 9 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.01 seconds
+       memory              1525.84k
+       OS Memory           29104.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1328  Switch Count  4
+       Page Faults                       0
+       Page Reclaims                     189
+       Page Swaps                        0
+       Voluntary Context Switches        23
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           528
+       
+ 
+ 86         
+ 87         PROC FREQ data=adrs_age1(rename=(AVALC='Best Overall Response'n));
+ 88         Table 'Best Overall Response'n*Trt01p /out=FreqCount_Avalc nocol norow nopercent;
+ 89         RUN;
+ 
+ NOTE: There were 70 observations read from the data set WORK.ADRS_AGE1.
+ NOTE: The data set WORK.FREQCOUNT_AVALC has 10 observations and 4 variables.
+ NOTE: PROCEDURE FREQ used (Total process time):
+       real time           0.02 seconds
+       user cpu time       0.03 seconds
+       system cpu time     0.00 seconds
+       memory              2341.09k
+       OS Memory           29364.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1329  Switch Count  6
+       Page Faults                       0
+       Page Reclaims                     263
+       Page Swaps                        0
+       Voluntary Context Switches        34
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           792
+       
+ 
+ 90         
+ 91         Proc print data=FreqCount_Avalc;
+ 92         run;
+ 
+ NOTE: There were 10 observations read from the data set WORK.FREQCOUNT_AVALC.
+ NOTE: PROCEDURE PRINT used (Total process time):
+       real time           0.01 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.00 seconds
+       memory              704.03k
+       OS Memory           28584.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1330  Switch Count  0
+       Page Faults                       0
+       Page Reclaims                     63
+       Page Swaps                        0
+       Voluntary Context Switches        0
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           0
+       
+ 
+ 93         
+ 94         PROC TRANSPOSE data=FreqCount_Avalc out=Avalc_t;
+ 95         BY 'Best Overall Response'n;
+ 96         ID Trt01p;
+ 97         VAR Count;
+ 98         RUN;
+ 
+ NOTE: There were 10 observations read from the data set WORK.FREQCOUNT_AVALC.
+ NOTE: The data set WORK.AVALC_T has 5 observations and 5 variables.
+ NOTE: PROCEDURE TRANSPOSE used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              2818.93k
+       OS Memory           30896.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1331  Switch Count  4
+       Page Faults                       0
+       Page Reclaims                     190
+       Page Swaps                        0
+       Voluntary Context Switches        29
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           528
+       
+ 
+ 99         
+ 100        data count;
+ 101        set Avalc_t;
+ 102        where _NAME_='COUNT';
+ 103        DROP _LABEL_ _NAME_;
+ 104        
+ 
+ NOTE: There were 5 observations read from the data set WORK.AVALC_T.
+       WHERE _NAME_='COUNT';
+ NOTE: The data set WORK.COUNT has 5 observations and 3 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.01 seconds
+       memory              1062.53k
+       OS Memory           29100.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1332  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     134
+       Page Swaps                        0
+       Voluntary Context Switches        10
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 105        data result(rename=(percentage1=CMP123 percentage2=Placebo Total1=Total));
+ 106        set count;
+ 107        Total=sum(CMP123,Placebo);
+ 108        percentage1 = put(CMP123, 3.)||'('||put(100*CMP123/50,5.1)||')';
+ 109        percentage2 = put(Placebo, 3.)||'('||put(100*Placebo/50,5.1)||')';
+ 110        Total1=put(Total, 3.)||'('||put(100*Total/100,5.1)||')';
+ 111        drop CMP123 Placebo Total;
+ 112        RUN;
+ 
+ NOTE: There were 5 observations read from the data set WORK.COUNT.
+ NOTE: The data set WORK.RESULT has 5 observations and 4 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              1082.31k
+       OS Memory           29100.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1333  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     130
+       Page Swaps                        0
+       Voluntary Context Switches        13
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 113        
+ 114        data bor_summary;
+ 115        length value $50;
+ 116        set result;
+ 117        retain Value;
+ 118        if 'Best Overall Response'n = 'CR' THEN Value='Complete Response (CR)';
+ 119        if 'Best Overall Response'n = 'PR' THEN Value='Partial Response (PR)';
+ 120        if 'Best Overall Response'n = 'SD' THEN Value='Stable Disease (SD)';
+ 121        if 'Best Overall Response'n = 'PD' THEN Value='Progressive Disease (PD)';
+ 122        if 'Best Overall Response'n = 'NE' THEN Value='Unable to Determine (NE)';
+ 123        drop 'Best Overall Response'n;
+ 124        RUN;
+ 
+ NOTE: There were 5 observations read from the data set WORK.RESULT.
+ NOTE: The data set WORK.BOR_SUMMARY has 5 observations and 4 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              1172.59k
+       OS Memory           29100.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1334  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     127
+       Page Swaps                        0
+       Voluntary Context Switches        13
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 125        
+ 126        proc sort data=BOR_SUMMARY out=summary;
+ 127        by Value;
+ 128        run;
+ 
+ NOTE: There were 5 observations read from the data set WORK.BOR_SUMMARY.
+ NOTE: The data set WORK.SUMMARY has 5 observations and 4 variables.
+ NOTE: PROCEDURE SORT used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              1187.25k
+       OS Memory           29360.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1335  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     151
+       Page Swaps                        0
+       Voluntary Context Switches        10
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           280
+       
+ 
+ 129        
+ 130        proc freq data=adrs_age1(where=(avalc="NE"));
+ 131        Table avalc*nereasn*Trt01p /list out=FreqCount_Avalc_ne1(drop=percent) nocol norow nopercent;
+ 132        RUN;
+ 
+ NOTE: There were 21 observations read from the data set WORK.ADRS_AGE1.
+       WHERE avalc='NE';
+ NOTE: The data set WORK.FREQCOUNT_AVALC_NE1 has 5 observations and 4 variables.
+ NOTE: PROCEDURE FREQ used (Total process time):
+       real time           0.01 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.00 seconds
+       memory              1868.46k
+       OS Memory           30140.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1336  Switch Count  10
+       Page Faults                       0
+       Page Reclaims                     390
+       Page Swaps                        0
+       Voluntary Context Switches        51
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           1320
+       
+ 
+ 133        
+ 134        Proc print data=FreqCount_Avalc_ne1;
+ 135        run;
+ 
+ NOTE: There were 5 observations read from the data set WORK.FREQCOUNT_AVALC_NE1.
+ NOTE: PROCEDURE PRINT used (Total process time):
+       real time           0.01 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.00 seconds
+       memory              648.93k
+       OS Memory           28840.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1337  Switch Count  0
+       Page Faults                       0
+       Page Reclaims                     64
+       Page Swaps                        0
+       Voluntary Context Switches        0
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           16
+       
+ 
+ 136        
+ 137        PROC TRANSPOSE data=FreqCount_Avalc_ne1 out=Avalc_ne1t;
+ 138        BY nereasn;
+ 139        ID Trt01p;
+ 140        VAR Count;
+ 141        RUN;
+ 
+ NOTE: There were 5 observations read from the data set WORK.FREQCOUNT_AVALC_NE1.
+ NOTE: The data set WORK.AVALC_NE1T has 3 observations and 5 variables.
+ NOTE: PROCEDURE TRANSPOSE used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              2933.96k
+       OS Memory           31152.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1338  Switch Count  4
+       Page Faults                       0
+       Page Reclaims                     228
+       Page Swaps                        0
+       Voluntary Context Switches        26
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           528
+       
+ 
+ 142        
+ 143        data result1(rename=(percentage1=CMP123 percentage2=Placebo Total1=Total));
+ 144        set Avalc_ne1t(drop=_NAME_ _LABEL_);
+ 145        if placebo=. then placebo=0;
+ 146        value="    "||nereasn;
+ 147        Total=sum(CMP123,Placebo);
+ 148        percentage1 = put(CMP123, 3.)||'('||put(100*CMP123/50,5.1)||')';
+ 149        percentage2 = put(Placebo, 3.)||'('||put(100*Placebo/50,5.1)||')';
+ 150        Total1=put(Total, 3.)||'('||put(100*Total/100,5.1)||')';
+ 151        drop CMP123 Placebo Total nereasn;
+ 152        RUN;
+ 
+ NOTE: There were 3 observations read from the data set WORK.AVALC_NE1T.
+ NOTE: The data set WORK.RESULT1 has 3 observations and 4 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.01 seconds
+       memory              1090.78k
+       OS Memory           29356.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1339  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     130
+       Page Swaps                        0
+       Voluntary Context Switches        10
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           272
+       
+ 
+ 153        
+ 154        data adrs_age1_or;
+ 155        set adrs_age1;
+ 156        if (avalc="CR" or avalc="PR") then type=1;
+ 157        else type=2;
+ 158        output;
+ 159        trt01p="Total";
+ 160        trt01pn=9;
+ 161        output;
+ 162        run;
+ 
+ NOTE: There were 70 observations read from the data set WORK.ADRS_AGE1.
+ NOTE: The data set WORK.ADRS_AGE1_OR has 140 observations and 10 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              1069.18k
+       OS Memory           29356.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1340  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     122
+       Page Swaps                        0
+       Voluntary Context Switches        13
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 163        
+ 164        proc sort data=adrs_age1_or;
+ 165        by trt01p;
+ 166        run;
+ 
+ NOTE: There were 140 observations read from the data set WORK.ADRS_AGE1_OR.
+ NOTE: The data set WORK.ADRS_AGE1_OR has 140 observations and 10 variables.
+ NOTE: PROCEDURE SORT used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              1039.78k
+       OS Memory           29356.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1341  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     112
+       Page Swaps                        0
+       Voluntary Context Switches        12
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 167        
+ 168        ods output OneWayFreqs=freq_age1_or(rename=(frequency=count))
+ 169           BinomialCLs=binomialCL_age1_or(where=(Type="Clopper-Pearson (Exact)"));
+ 170        proc freq data=adrs_age1_or;
+ 171        by trt01p;
+ 172        Tables type/binomial(ac wilson exact) out=FreqCount_Avalc_re1(drop=percent) nocol norow nopercent;
+ 173        RUN;
+ 
+ NOTE: The data set WORK.BINOMIALCL_AGE1_OR has 3 observations and 6 variables.
+ NOTE: The data set WORK.FREQ_AGE1_OR has 6 observations and 6 variables.
+ NOTE: There were 140 observations read from the data set WORK.ADRS_AGE1_OR.
+ NOTE: The data set WORK.FREQCOUNT_AVALC_RE1 has 6 observations and 3 variables.
+ NOTE: PROCEDURE FREQ used (Total process time):
+       real time           0.08 seconds
+       user cpu time       0.09 seconds
+       system cpu time     0.00 seconds
+       memory              2358.43k
+       OS Memory           30136.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1342  Switch Count  8
+       Page Faults                       0
+       Page Reclaims                     483
+       Page Swaps                        0
+       Voluntary Context Switches        47
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           1072
+       
+ 
+ 174        ods output close;
+ 175        
+ 176        proc print data=binomialCL_age1_or; run;
+ 
+ NOTE: There were 3 observations read from the data set WORK.BINOMIALCL_AGE1_OR.
+ NOTE: PROCEDURE PRINT used (Total process time):
+       real time           0.01 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.00 seconds
+       memory              680.93k
+       OS Memory           29096.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1343  Switch Count  0
+       Page Faults                       0
+       Page Reclaims                     64
+       Page Swaps                        0
+       Voluntary Context Switches        0
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           0
+       
+ 
+ 177        proc print data=freq_age1_or; run;
+ 
+ NOTE: There were 6 observations read from the data set WORK.FREQ_AGE1_OR.
+ NOTE: PROCEDURE PRINT used (Total process time):
+       real time           0.01 seconds
+       user cpu time       0.02 seconds
+       system cpu time     0.00 seconds
+       memory              567.81k
+       OS Memory           29096.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1344  Switch Count  0
+       Page Faults                       0
+       Page Reclaims                     64
+       Page Swaps                        0
+       Voluntary Context Switches        0
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           16
+       
+ 
+ 178        
+ 179        
+ 180        data binomialCL_age1_or_1;
+ 181        set binomialCL_age1_or;
+ 182        Value="   (95% CI)";
+ 183        CI = '('||put(LowerCL, 6.4)||", "||put(UpperCL, 6.4)||')';
+ 184        keep trt01p value CI;
+ 185        RUN;
+ 
+ NOTE: There were 3 observations read from the data set WORK.BINOMIALCL_AGE1_OR.
+ NOTE: The data set WORK.BINOMIALCL_AGE1_OR_1 has 3 observations and 3 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              951.34k
+       OS Memory           29356.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1345  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     153
+       Page Swaps                        0
+       Voluntary Context Switches        14
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 186        
+ 187        PROC TRANSPOSE data=freq_age1_or(where=(type=1)) out=freq_age1_or_t;
+ 188        BY type;
+ 189        ID Trt01p;
+ 190        VAR count;
+ 191        RUN;
+ 
+ NOTE: There were 3 observations read from the data set WORK.FREQ_AGE1_OR.
+       WHERE type=1;
+ NOTE: The data set WORK.FREQ_AGE1_OR_T has 1 observations and 5 variables.
+ NOTE: PROCEDURE TRANSPOSE used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.01 seconds
+       memory              3089.59k
+       OS Memory           31668.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1346  Switch Count  4
+       Page Faults                       0
+       Page Reclaims                     258
+       Page Swaps                        0
+       Voluntary Context Switches        30
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           536
+       
+ 
+ 192        
+ 193        data result2(rename=(percentage1=CMP123 percentage2=Placebo Total1=Total));
+ 194        set freq_age1_or_t(drop=_NAME_ type);
+ 195        Value="Objective Response Rate(1)";
+ 196        percentage1 = put(CMP123, 3.)||'/50 ('||put(100*CMP123/50,5.1)||'%)';
+ 197        percentage2 = put(Placebo, 3.)||'/50 ('||put(100*Placebo/50,5.1)||'%)';
+ 198        Total1=put(Total, 3.)||'/100 ('||put(100*Total/100,5.1)||'%)';
+ 199        drop CMP123 Placebo Total;
+ 200        RUN;
+ 
+ NOTE: There were 1 observations read from the data set WORK.FREQ_AGE1_OR_T.
+ NOTE: The data set WORK.RESULT2 has 1 observations and 4 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.00 seconds
+       memory              1080.81k
+       OS Memory           29612.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1347  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     132
+       Page Swaps                        0
+       Voluntary Context Switches        11
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 201        
+ 202        PROC TRANSPOSE data=binomialCL_age1_or_1 out=result3(drop=_NAME_);
+ 203        BY value;
+ 204        ID Trt01p;
+ 205        VAR CI;
+ 206        RUN;
+ 
+ NOTE: There were 3 observations read from the data set WORK.BINOMIALCL_AGE1_OR_1.
+ NOTE: The data set WORK.RESULT3 has 1 observations and 4 variables.
+ NOTE: PROCEDURE TRANSPOSE used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              2927.15k
+       OS Memory           31664.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1348  Switch Count  4
+       Page Faults                       0
+       Page Reclaims                     226
+       Page Swaps                        0
+       Voluntary Context Switches        26
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           528
+       
+ 
+ 207        
+ 208        proc sql;
+ 209        create table empty like summary;
+ NOTE: Table WORK.EMPTY created, with 0 rows and 4 columns.
+ 210        insert into empty
+ 211        set
+ 212        value="Best Overall Response",
+ 213        CMP123=" ",
+ 214        Placebo=" ",
+ 215        Total=" ";
+ NOTE: 1 row was inserted into WORK.EMPTY.
+ 
+ 216        select * from empty;
+ 217        quit;
+ NOTE: PROCEDURE SQL used (Total process time):
+       real time           0.01 seconds
+       user cpu time       0.02 seconds
+       system cpu time     0.00 seconds
+       memory              5864.87k
+       OS Memory           34732.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1349  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     208
+       Page Swaps                        0
+       Voluntary Context Switches        14
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 218        
+ 219        data final;
+ 220        length value CMP123 Placebo Total $50;
+ 221        set empty summary result1 result2 result3;
+ 222        run;
+ 
+ NOTE: There were 1 observations read from the data set WORK.EMPTY.
+ NOTE: There were 5 observations read from the data set WORK.SUMMARY.
+ NOTE: There were 3 observations read from the data set WORK.RESULT1.
+ NOTE: There were 1 observations read from the data set WORK.RESULT2.
+ NOTE: There were 1 observations read from the data set WORK.RESULT3.
+ NOTE: The data set WORK.FINAL has 11 observations and 4 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              2181.62k
+       OS Memory           30908.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1350  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     273
+       Page Swaps                        0
+       Voluntary Context Switches        12
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           272
+       
+ 
+ 223        
+ 224        PROC FREQ data=adrs_age2(rename=(AVALC='Best Overall Response'n));
+ 225        Table 'Best Overall Response'n*Trt01p /out=FreqCount_Avalc1 nocol norow nopercent;
+ 226        RUN;
+ 
+ NOTE: There were 30 observations read from the data set WORK.ADRS_AGE2.
+ NOTE: The data set WORK.FREQCOUNT_AVALC1 has 10 observations and 4 variables.
+ NOTE: PROCEDURE FREQ used (Total process time):
+       real time           0.04 seconds
+       user cpu time       0.05 seconds
+       system cpu time     0.00 seconds
+       memory              1363.40k
+       OS Memory           30388.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1351  Switch Count  6
+       Page Faults                       0
+       Page Reclaims                     256
+       Page Swaps                        0
+       Voluntary Context Switches        42
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           792
+       
+ 
+ 227        
+ 228        Proc print data=FreqCount_Avalc1;
+ 229        run;
+ 
+ NOTE: There were 10 observations read from the data set WORK.FREQCOUNT_AVALC1.
+ NOTE: PROCEDURE PRINT used (Total process time):
+       real time           0.01 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.00 seconds
+       memory              648.09k
+       OS Memory           29608.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1352  Switch Count  0
+       Page Faults                       0
+       Page Reclaims                     67
+       Page Swaps                        0
+       Voluntary Context Switches        0
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           0
+       
+ 
+ 230        
+ 231        PROC TRANSPOSE data=FreqCount_Avalc1 out=Avalc1_t;
+ 232        BY 'Best Overall Response'n;
+ 233        ID Trt01p;
+ 234        VAR Count;
+ 235        RUN;
+ 
+ NOTE: There were 10 observations read from the data set WORK.FREQCOUNT_AVALC1.
+ NOTE: The data set WORK.AVALC1_T has 5 observations and 5 variables.
+ NOTE: PROCEDURE TRANSPOSE used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              2702.15k
+       OS Memory           31920.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1353  Switch Count  4
+       Page Faults                       0
+       Page Reclaims                     227
+       Page Swaps                        0
+       Voluntary Context Switches        27
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           528
+       
+ 
+ 236        
+ 237        data count1;
+ 238        set Avalc1_t;
+ 239        where _NAME_='COUNT';
+ 240        DROP _LABEL_ _NAME_;
+ 241        
+ 
+ NOTE: There were 5 observations read from the data set WORK.AVALC1_T.
+       WHERE _NAME_='COUNT';
+ NOTE: The data set WORK.COUNT1 has 5 observations and 3 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              950.59k
+       OS Memory           30124.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1354  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     130
+       Page Swaps                        0
+       Voluntary Context Switches        16
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           272
+       
+ 
+ 242        data result_1(rename=(percentage1=CMP123 percentage2=Placebo Total1=Total));
+ 243        set count1;
+ 244        Total=sum(CMP123,Placebo);
+ 245        percentage1 = put(CMP123, 3.)||'('||put(100*CMP123/50,5.1)||')';
+ 246        percentage2 = put(Placebo, 3.)||'('||put(100*Placebo/50,5.1)||')';
+ 247        Total1=put(Total, 3.)||'('||put(100*Total/100,5.1)||')';
+ 248        drop CMP123 Placebo Total;
+ 249        RUN;
+ 
+ NOTE: There were 5 observations read from the data set WORK.COUNT1.
+ NOTE: The data set WORK.RESULT_1 has 5 observations and 4 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.00 seconds
+       memory              1082.34k
+       OS Memory           30124.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1355  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     131
+       Page Swaps                        0
+       Voluntary Context Switches        18
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 250        
+ 251        data bor_summary_1;
+ 252        length value $50;
+ 253        set result_1;
+ 254        retain Value;
+ 255        if 'Best Overall Response'n = 'CR' THEN Value='Complete Response (CR)';
+ 256        if 'Best Overall Response'n = 'PR' THEN Value='Partial Response (PR)';
+ 257        if 'Best Overall Response'n = 'SD' THEN Value='Stable Disease (SD)';
+ 258        if 'Best Overall Response'n = 'PD' THEN Value='Progressive Disease (PD)';
+ 259        if 'Best Overall Response'n = 'NE' THEN Value='Unable to Determine (NE)';
+ 260        drop 'Best Overall Response'n;
+ 261        RUN;
+ 
+ NOTE: There were 5 observations read from the data set WORK.RESULT_1.
+ NOTE: The data set WORK.BOR_SUMMARY_1 has 5 observations and 4 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.01 seconds
+       memory              1060.21k
+       OS Memory           30124.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1356  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     130
+       Page Swaps                        0
+       Voluntary Context Switches        15
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 262        
+ 263        proc sort data=BOR_SUMMARY_1 out=summary_1;
+ 264        by Value;
+ 265        run;
+ 
+ NOTE: There were 5 observations read from the data set WORK.BOR_SUMMARY_1.
+ NOTE: The data set WORK.SUMMARY_1 has 5 observations and 4 variables.
+ NOTE: PROCEDURE SORT used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              1187.25k
+       OS Memory           30384.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1357  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     149
+       Page Swaps                        0
+       Voluntary Context Switches        14
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           272
+       
+ 
+ 266        
+ 267        proc freq data=adrs_age2(where=(avalc="NE"));
+ 268        Table avalc*nereasn*Trt01p /list out=FreqCount_Avalc_ne2(drop=percent) nocol norow nopercent;
+ 269        RUN;
+ 
+ NOTE: There were 7 observations read from the data set WORK.ADRS_AGE2.
+       WHERE avalc='NE';
+ NOTE: The data set WORK.FREQCOUNT_AVALC_NE2 has 3 observations and 4 variables.
+ NOTE: PROCEDURE FREQ used (Total process time):
+       real time           0.01 seconds
+       user cpu time       0.02 seconds
+       system cpu time     0.00 seconds
+       memory              1878.09k
+       OS Memory           31164.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1358  Switch Count  10
+       Page Faults                       0
+       Page Reclaims                     389
+       Page Swaps                        0
+       Voluntary Context Switches        59
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           1336
+       
+ 
+ 270        
+ 271        Proc print data=FreqCount_Avalc_ne2;
+ 272        run;
+ 
+ NOTE: There were 3 observations read from the data set WORK.FREQCOUNT_AVALC_NE2.
+ NOTE: PROCEDURE PRINT used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.00 seconds
+       memory              648.93k
+       OS Memory           29864.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1359  Switch Count  0
+       Page Faults                       0
+       Page Reclaims                     67
+       Page Swaps                        0
+       Voluntary Context Switches        0
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           0
+       
+ 
+ 273        
+ 274        PROC TRANSPOSE data=FreqCount_Avalc_ne2 out=Avalc_ne2t;
+ 275        BY nereasn;
+ 276        ID Trt01p;
+ 277        VAR Count;
+ 278        RUN;
+ 
+ NOTE: There were 3 observations read from the data set WORK.FREQCOUNT_AVALC_NE2.
+ NOTE: The data set WORK.AVALC_NE2T has 3 observations and 5 variables.
+ NOTE: PROCEDURE TRANSPOSE used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              2814.71k
+       OS Memory           32176.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1360  Switch Count  4
+       Page Faults                       0
+       Page Reclaims                     228
+       Page Swaps                        0
+       Voluntary Context Switches        24
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           528
+       
+ 
+ 279        
+ 280        data result1_1(rename=(percentage1=CMP123 percentage2=Placebo Total1=Total));
+ 281        set Avalc_ne2t(drop=_NAME_ _LABEL_);
+ 282        if cmp123=. then cmp123=0;
+ 283        if placebo=. then placebo=0;
+ 284        value="    "||nereasn;
+ 285        Total=sum(CMP123,Placebo);
+ 286        percentage1 = put(CMP123, 3.)||'('||put(100*CMP123/50,5.1)||')';
+ 287        percentage2 = put(Placebo, 3.)||'('||put(100*Placebo/50,5.1)||')';
+ 288        Total1=put(Total, 3.)||'('||put(100*Total/100,5.1)||')';
+ 289        drop CMP123 Placebo Total nereasn;
+ 290        RUN;
+ 
+ NOTE: There were 3 observations read from the data set WORK.AVALC_NE2T.
+ NOTE: The data set WORK.RESULT1_1 has 3 observations and 4 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.01 seconds
+       memory              1202.90k
+       OS Memory           30124.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1361  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     130
+       Page Swaps                        0
+       Voluntary Context Switches        10
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           272
+       
+ 
+ 291        
+ 292        data adrs_age2_or;
+ 293        set adrs_age2;
+ 294        if (avalc="CR" or avalc="PR") then type=1;
+ 295        else type=2;
+ 296        output;
+ 297        trt01p="Total";
+ 298        trt01pn=9;
+ 299        output;
+ 300        run;
+ 
+ NOTE: There were 30 observations read from the data set WORK.ADRS_AGE2.
+ NOTE: The data set WORK.ADRS_AGE2_OR has 60 observations and 10 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              1181.31k
+       OS Memory           30124.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1362  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     126
+       Page Swaps                        0
+       Voluntary Context Switches        10
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 301        
+ 302        proc sort data=adrs_age2_or;
+ 303        by trt01p;
+ 304        run;
+ 
+ NOTE: There were 60 observations read from the data set WORK.ADRS_AGE2_OR.
+ NOTE: The data set WORK.ADRS_AGE2_OR has 60 observations and 10 variables.
+ NOTE: PROCEDURE SORT used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              1039.78k
+       OS Memory           30124.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1363  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     114
+       Page Swaps                        0
+       Voluntary Context Switches        8
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 305        
+ 306        ods output OneWayFreqs=freq_age2_or(rename=(frequency=count))
+ 307           BinomialCLs=binomialCL_age2_or(where=(Type="Clopper-Pearson (Exact)"));
+ 308        proc freq data=adrs_age2_or;
+ 309        by trt01p;
+ 310        Tables type/binomial(ac wilson exact) out=FreqCount_Avalc_re2(drop=percent) nocol norow nopercent;
+ 311        RUN;
+ 
+ NOTE: The data set WORK.BINOMIALCL_AGE2_OR has 3 observations and 6 variables.
+ NOTE: The data set WORK.FREQ_AGE2_OR has 6 observations and 6 variables.
+ NOTE: There were 60 observations read from the data set WORK.ADRS_AGE2_OR.
+ NOTE: The data set WORK.FREQCOUNT_AVALC_RE2 has 6 observations and 3 variables.
+ NOTE: PROCEDURE FREQ used (Total process time):
+       real time           0.07 seconds
+       user cpu time       0.08 seconds
+       system cpu time     0.00 seconds
+       memory              2140.12k
+       OS Memory           30904.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1364  Switch Count  8
+       Page Faults                       0
+       Page Reclaims                     436
+       Page Swaps                        0
+       Voluntary Context Switches        52
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           1072
+       
+ 
+ 312        ods output close;
+ 313        
+ 314        proc print data=binomialCL_age2_or; run;
+ 
+ NOTE: There were 3 observations read from the data set WORK.BINOMIALCL_AGE2_OR.
+ NOTE: PROCEDURE PRINT used (Total process time):
+       real time           0.01 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.00 seconds
+       memory              680.93k
+       OS Memory           29864.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1365  Switch Count  0
+       Page Faults                       0
+       Page Reclaims                     64
+       Page Swaps                        0
+       Voluntary Context Switches        0
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           0
+       
+ 
+ 315        proc print data=freq_age2_or; run;
+ 
+ NOTE: There were 6 observations read from the data set WORK.FREQ_AGE2_OR.
+ NOTE: PROCEDURE PRINT used (Total process time):
+       real time           0.01 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.00 seconds
+       memory              679.93k
+       OS Memory           29864.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1366  Switch Count  0
+       Page Faults                       0
+       Page Reclaims                     64
+       Page Swaps                        0
+       Voluntary Context Switches        1
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           16
+       
+ 
+ 316        
+ 317        
+ 318        data binomialCL_age2_or_1;
+ 319        set binomialCL_age2_or;
+ 320        Value="   (95% CI)";
+ 321        CI = '('||put(LowerCL, 6.4)||", "||put(UpperCL, 6.4)||')';
+ 322        keep trt01p value CI;
+ 323        RUN;
+ 
+ NOTE: There were 3 observations read from the data set WORK.BINOMIALCL_AGE2_OR.
+ NOTE: The data set WORK.BINOMIALCL_AGE2_OR_1 has 3 observations and 3 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              1063.46k
+       OS Memory           30124.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1367  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     131
+       Page Swaps                        0
+       Voluntary Context Switches        14
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 324        
+ 325        PROC TRANSPOSE data=freq_age2_or(where=(type=1)) out=freq_age2_or_t;
+ 326        BY type;
+ 327        ID Trt01p;
+ 328        VAR count;
+ 329        RUN;
+ 
+ NOTE: There were 3 observations read from the data set WORK.FREQ_AGE2_OR.
+       WHERE type=1;
+ NOTE: The data set WORK.FREQ_AGE2_OR_T has 1 observations and 5 variables.
+ NOTE: PROCEDURE TRANSPOSE used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              3089.59k
+       OS Memory           32436.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1368  Switch Count  4
+       Page Faults                       0
+       Page Reclaims                     258
+       Page Swaps                        0
+       Voluntary Context Switches        28
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           536
+       
+ 
+ 330        
+ 331        data result2_1(rename=(percentage1=CMP123 percentage2=Placebo Total1=Total));
+ 332        set freq_age2_or_t(drop=_NAME_ type);
+ 333        Value="Objective Response Rate(1)";
+ 334        percentage1 = put(CMP123, 3.)||'/50 ('||put(100*CMP123/50,5.1)||'%)';
+ 335        percentage2 = put(Placebo, 3.)||'/50 ('||put(100*Placebo/50,5.1)||'%)';
+ 336        Total1=put(Total, 3.)||'/100 ('||put(100*Total/100,5.1)||'%)';
+ 337        drop CMP123 Placebo Total;
+ 338        RUN;
+ 
+ NOTE: There were 1 observations read from the data set WORK.FREQ_AGE2_OR_T.
+ NOTE: The data set WORK.RESULT2_1 has 1 observations and 4 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.01 seconds
+       memory              1080.81k
+       OS Memory           30124.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1369  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     131
+       Page Swaps                        0
+       Voluntary Context Switches        10
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 339        
+ 340        PROC TRANSPOSE data=binomialCL_age2_or_1 out=result3_1(drop=_NAME_);
+ 341        BY value;
+ 342        ID Trt01p;
+ 343        VAR CI;
+ 344        RUN;
+ 
+ NOTE: There were 3 observations read from the data set WORK.BINOMIALCL_AGE2_OR_1.
+ NOTE: The data set WORK.RESULT3_1 has 1 observations and 4 variables.
+ NOTE: PROCEDURE TRANSPOSE used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              2815.03k
+       OS Memory           32176.00k
+       Timestamp           03/13/2023 02:03:36 AM
+       Step Count                        1370  Switch Count  4
+       Page Faults                       0
+       Page Reclaims                     226
+       Page Swaps                        0
+       Voluntary Context Switches        28
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           528
+       
+ 
+ 345        
+ 346        
+ 347        data final_1;
+ 348        length value CMP123 Placebo Total $50;
+ 349        set empty summary_1 result1_1 result2_1 result3_1;
+ 350        run;
+ 
+ NOTE: There were 1 observations read from the data set WORK.EMPTY.
+ NOTE: There were 5 observations read from the data set WORK.SUMMARY_1.
+ NOTE: There were 3 observations read from the data set WORK.RESULT1_1.
+ NOTE: There were 1 observations read from the data set WORK.RESULT2_1.
+ NOTE: There were 1 observations read from the data set WORK.RESULT3_1.
+ NOTE: The data set WORK.FINAL_1 has 11 observations and 4 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.00 seconds
+       memory              2070.53k
+       OS Memory           31164.00k
+       Timestamp           03/13/2023 02:03:37 AM
+       Step Count                        1371  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     272
+       Page Swaps                        0
+       Voluntary Context Switches        14
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 351        
+ 352        Proc report data=final
+ 353        headline nowd headskip;
+ 354        title1 "Table 13";
+ 355        title2 'Best Overall Response per Investigator by Age Category';
+ 356        title3 "ITT Subjects";
+ 357        title6 lspace=3 height=0.8 justify=left "Subgroup: Age Category-<65";
+ 358        column Value ("Number of Subjects (%)" "______" (CMP123 Placebo Total));
+ 359        define Value / order order=data '' style(column)=[asis=on] flow;
+ 360        define CMP123 / display "CMP123 / N=50";
+ 361        define Placebo / display 'Placebo / N=50';
+ 362        define Total / display "Total / N=100";
+ 363        compute after;
+ 364        line @1 110*"_";
+ 365        line @1 "(1): 95% confidence interval computed using Clopper-Pearson approach.";
+ 366        endcomp;
+ 367        RUN;
+ 
+ NOTE: There were 11 observations read from the data set WORK.FINAL.
+ NOTE: PROCEDURE REPORT used (Total process time):
+       real time           0.02 seconds
+       user cpu time       0.02 seconds
+       system cpu time     0.01 seconds
+       memory              7095.78k
+       OS Memory           35252.00k
+       Timestamp           03/13/2023 02:03:37 AM
+       Step Count                        1372  Switch Count  5
+       Page Faults                       0
+       Page Reclaims                     1493
+       Page Swaps                        0
+       Voluntary Context Switches        65
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           8
+       
+ 
+ 368        
+ 369        Proc report data=final_1
+ 370        headline nowd headskip;
+ 371        title1 "Table 13";
+ 372        title2 'Best Overall Response per Investigator by Age Category';
+ 373        title3 "ITT Subjects";
+ 374        title6 lspace=3 height=0.8 justify=left "Subgroup: Age Category->=65";
+ 375        column Value ("Number of Subjects (%)" "______" (CMP123 Placebo Total));
+ 376        define Value / order order=data '' style(column)=[asis=on] flow;
+ 377        define CMP123 / display "CMP123 / N=50";
+ 378        define Placebo / display 'Placebo / N=50';
+ 379        define Total / display "Total / N=100";
+ 380        compute after;
+ 381        line @1 110*"_";
+ 382        line @1 "(1): 95% confidence interval computed using Clopper-Pearson approach.";
+ 383        endcomp;
+ 384        RUN;
+ 
+ NOTE: There were 11 observations read from the data set WORK.FINAL_1.
+ NOTE: PROCEDURE REPORT used (Total process time):
+       real time           0.02 seconds
+       user cpu time       0.03 seconds
+       system cpu time     0.00 seconds
+       memory              6856.18k
+       OS Memory           35252.00k
+       Timestamp           03/13/2023 02:03:37 AM
+       Step Count                        1373  Switch Count  5
+       Page Faults                       0
+       Page Reclaims                     1378
+       Page Swaps                        0
+       Voluntary Context Switches        59
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           0
+       
+ 
+ 385        
+ 386        
+ 387        OPTIONS NONOTES NOSTIMER NOSOURCE NOSYNTAXCHECK;
+ 397        

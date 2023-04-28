@@ -1,0 +1,1034 @@
+ 
+ 1          OPTIONS NONOTES NOSTIMER NOSOURCE NOSYNTAXCHECK;
+ 68         
+ 69         %let pgname=t_14_3_10;
+ 70         
+ 71         proc format;
+ 72         
+ 72       !  value trtc (notsorted)
+ 73         0='Placebo'
+ 74         1="CMP-135"
+ 75         ;
+ NOTE: Format TRTC is already on the library WORK.FORMATS.
+ NOTE: Format TRTC has been output.
+ 76         
+ 76       !  value $ncidirf
+ 77         "L"="Low"
+ 78         'H'="High"
+ 79         ;
+ NOTE: Format $NCIDIRF is already on the library WORK.FORMATS.
+ NOTE: Format $NCIDIRF has been output.
+ 80         
+ 80       !  value $testnmf (notsorted)
+ 81         "SODIUM"="Sodium (mmol/L)"
+ 82         "K"="Potassium (mmol/L)"
+ 83         "MG"="Magnesium (mmol/L)"
+ 84         "ALP"="Alkaline Phosphatase (U/L)"
+ 85         "AST"="Aspartate Aminotransferase (U/L)"
+ 86         "ALT"="Alanine Aminotransferase (U/L)"
+ 87         "BILI"="Bilirubin (umol/L)"
+ 88         "BUN"="Blood Urea Nitrogen (mmol/L)"
+ 89         "CREAT"="Creatinine (umol/L)"
+ 90         ;
+ NOTE: Format $TESTNMF is already on the library WORK.FORMATS.
+ NOTE: Format $TESTNMF has been output.
+ 91         
+ 91       !  invalue $testordf (notsorted)
+ 92         "SODIUM"=1
+ 93         "K"=2
+ 94         "MG"=3
+ 95         "ALP"=4
+ 96         "AST"=5
+ 97         "ALT"=6
+ 98         "BILI"=7
+ 99         "BUN"=8
+ 100        "CREAT"=9
+ 101        ;
+ NOTE: Informat $TESTORDF is already on the library WORK.FORMATS.
+ NOTE: Informat $TESTORDF has been output.
+ 102        
+ 102      !  value $bncigrf (notsorted)
+ 103        '0'='0'
+ 104        '1'='1'
+ 105        '2'='2'
+ 106        '3'='3'
+ 107        '4'='4'
+ 108        '9'="1-4"
+ 109        ;
+ NOTE: Format $BNCIGRF is already on the library WORK.FORMATS.
+ NOTE: Format $BNCIGRF has been output.
+ 110        run;
+ 
+ NOTE: PROCEDURE FORMAT used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              467.28k
+       OS Memory           25512.00k
+       Timestamp           03/10/2023 08:52:17 AM
+       Step Count                        630  Switch Count  0
+       Page Faults                       0
+       Page Reclaims                     20
+       Page Swaps                        0
+       Voluntary Context Switches        0
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           40
+       
+ 
+ 111        
+ 112        proc datasets mt=data lib=work kill;
+ NOTE: Deleting WORK.ADLB (memtype=DATA).
+ NOTE: Deleting WORK.BIGN (memtype=DATA).
+ NOTE: Deleting WORK.DENOM (memtype=DATA).
+ NOTE: Deleting WORK.FINAL1 (memtype=DATA).
+ NOTE: Deleting WORK.FINAL2 (memtype=DATA).
+ NOTE: Deleting WORK.RPT (memtype=DATA).
+ NOTE: Deleting WORK.RPT_BASE (memtype=DATA).
+ NOTE: Deleting WORK.RPT_BASE_II (memtype=DATA).
+ NOTE: Deleting WORK.RPT_FINAL (memtype=DATA).
+ NOTE: Deleting WORK.RPT_I (memtype=DATA).
+ NOTE: Deleting WORK.RPT_II (memtype=DATA).
+ NOTE: Deleting WORK.STATS (memtype=DATA).
+ NOTE: Deleting WORK.STATS_TRANS (memtype=DATA).
+ NOTE: Deleting WORK.STATS_TRANS_II (memtype=DATA).
+ NOTE: Deleting WORK.TEMPLATE (memtype=DATA).
+ 113        run;
+ 
+ 114        
+ 
+ NOTE: PROCEDURE DATASETS used (Total process time):
+       real time           0.04 seconds
+       user cpu time       0.04 seconds
+       system cpu time     0.00 seconds
+       memory              1392.43k
+       OS Memory           26028.00k
+       Timestamp           03/10/2023 08:52:17 AM
+       Step Count                        631  Switch Count  30
+       Page Faults                       0
+       Page Reclaims                     124
+       Page Swaps                        0
+       Voluntary Context Switches        169
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           16
+       
+ 
+ 115        proc sort data=sasfile.adlbsi
+ 116        (where=(ady>=1 and ablfl ^='Y'and anl01fl ='Y' and  parcat2="SI" and SAFFL="Y"))
+                                          ___
+                                          49
+ NOTE 49-169: The meaning of an identifier after a quoted string might change in a future SAS release.  Inserting white space 
+              between a quoted string and the succeeding identifier is recommended.
+ 117        out=adlb;
+ 118        by usubjid;
+ 119        run;
+ 
+ NOTE: There were 11464 observations read from the data set SASFILE.ADLBSI.
+       WHERE (ady>=1) and (ablfl not = 'Y') and (anl01fl='Y') and (parcat2='SI') and (SAFFL='Y');
+ NOTE: The data set WORK.ADLB has 11464 observations and 58 variables.
+ NOTE: PROCEDURE SORT used (Total process time):
+       real time           0.02 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.02 seconds
+       memory              12974.50k
+       OS Memory           38108.00k
+       Timestamp           03/10/2023 08:52:17 AM
+       Step Count                        632  Switch Count  5
+       Page Faults                       0
+       Page Reclaims                     3029
+       Page Swaps                        0
+       Voluntary Context Switches        22
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           19480
+       
+ 
+ 120        
+ 121        data adlb (keep=patnum usubjid testdes testnm ncidir bncidir trtc nciabgr bnciabgr
+ 122        ontreat saffl anlflag ablfl ady evals avalc);
+ 123        length testdes $40 testnm $8 ontreat $1;
+ 124        set adlb;
+ 125        where paramcd in ("CALPS","CALTS","CASTS","CBILIS","CBUNS","CCREATS",
+ 126          "CKS","CMGS", "CSODIUMS");
+ 127        testdes=strip(scan(param,2,'|('));
+ 128        lnparmcd=length(paramcd);
+ 129        end=lnparmcd-2;
+ 130        testnm=strip(substr(paramcd,2,END));
+ 131        ncidir=atoxdir;
+ 132        bncidir=btoxdir;
+ 133        trtc=trt01an;
+ 134        nciabgr=atoxgr;
+ 135        bnciabgr=btoxgr;
+ 136        if ady >=1 then ontreat="Y";
+ 137        else ontreat=" ";
+ 138        anlflag=anl01fl;
+ 139        evals=saffl;
+ 140        patnum=input(scan(usubjid,3,'-'),best.);
+ 141        run;
+ 
+ NOTE: There were 4058 observations read from the data set WORK.ADLB.
+       WHERE paramcd in ('CALPS', 'CALTS', 'CASTS', 'CBILIS', 'CBUNS', 'CCREATS', 'CKS', 'CMGS', 'CSODIUMS');
+ NOTE: The data set WORK.ADLB has 4058 observations and 16 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.01 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.01 seconds
+       memory              2812.93k
+       OS Memory           28592.00k
+       Timestamp           03/10/2023 08:52:17 AM
+       Step Count                        633  Switch Count  5
+       Page Faults                       0
+       Page Reclaims                     447
+       Page Swaps                        0
+       Voluntary Context Switches        17
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           1288
+       
+ 
+ 142        
+ 143        proc freq data=adlb;
+ 144        title "testnum and testdes values and freq";
+ 145        table testdes*testnm/list norow nopercent missing;
+ 146        run;
+ 
+ NOTE: There were 4058 observations read from the data set WORK.ADLB.
+ NOTE: PROCEDURE FREQ used (Total process time):
+       real time           0.02 seconds
+       user cpu time       0.02 seconds
+       system cpu time     0.01 seconds
+       memory              2232.84k
+       OS Memory           28220.00k
+       Timestamp           03/10/2023 08:52:17 AM
+       Step Count                        634  Switch Count  9
+       Page Faults                       0
+       Page Reclaims                     433
+       Page Swaps                        0
+       Voluntary Context Switches        44
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           1056
+       
+ 
+ 147        
+ 148        data rpt;
+ 149        set adlb;
+ 150        if testnm in ('SODIUM', 'K', 'MG') then do;
+ 151        if bncidir=' ' then do;
+ 152        bncidir='L';
+ 153        bnciabgr='0';
+ 154        end;
+ 155        if ncidir=' ' then do;
+ 156        ncidir='L';
+ 157        nciabgr='0';
+ 158        end;
+ 159        end;
+ 160        if testnm in ("ALP","AST","ALT","BILI","BUN","CREAT") then do;
+ 161        if bncidir=' ' then do;
+ 162        bncidir='H';
+ 163        bnciabgr='0';
+ 164        end;
+ 165        if ncidir=' ' then do;
+ 166        ncidir='H';
+ 167        nciabgr='0';
+ 168        end;
+ 169        end;
+ 170        run;
+ 
+ NOTE: There were 4058 observations read from the data set WORK.ADLB.
+ NOTE: The data set WORK.RPT has 4058 observations and 16 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              2032.62k
+       OS Memory           27696.00k
+       Timestamp           03/10/2023 08:52:17 AM
+       Step Count                        635  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     193
+       Page Swaps                        0
+       Voluntary Context Switches        13
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           1288
+       
+ 
+ 171        
+ 172        proc print data=rpt;
+ 173        title "All DATA: Records with high base for SODIUM, K, MG";
+ 174        where bncidir='H' and testnm in ('SODIUM', 'K', 'MG');
+ 175        format trtc trtc.;
+ 176        run;
+ 
+ NOTE: There were 27 observations read from the data set WORK.RPT.
+       WHERE (bncidir='H') and testnm in ('K', 'MG', 'SODIUM');
+ NOTE: PROCEDURE PRINT used (Total process time):
+       real time           0.07 seconds
+       user cpu time       0.08 seconds
+       system cpu time     0.00 seconds
+       memory              1496.03k
+       OS Memory           27696.00k
+       Timestamp           03/10/2023 08:52:17 AM
+       Step Count                        636  Switch Count  1
+       Page Faults                       0
+       Page Reclaims                     204
+       Page Swaps                        0
+       Voluntary Context Switches        6
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           48
+       
+ 
+ 177        
+ 178        proc sort data=rpt out=rpt_base(keep=patnum testnm bncidir bnciabgr);
+ 179        by patnum testnm bnciabgr;
+ 180        run;
+ 
+ NOTE: There were 4058 observations read from the data set WORK.RPT.
+ NOTE: The data set WORK.RPT_BASE has 4058 observations and 4 variables.
+ NOTE: PROCEDURE SORT used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.00 seconds
+       memory              2770.59k
+       OS Memory           28992.00k
+       Timestamp           03/10/2023 08:52:17 AM
+       Step Count                        637  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     363
+       Page Swaps                        0
+       Voluntary Context Switches        14
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           272
+       
+ 
+ 181        
+ 182        data rpt_base_II;
+ 183        set rpt_base;
+ 184        by patnum testnm bnciabgr;
+ 185        if last.testnm;
+ 186        run;
+ 
+ NOTE: There were 4058 observations read from the data set WORK.RPT_BASE.
+ NOTE: The data set WORK.RPT_BASE_II has 576 observations and 4 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              1140.50k
+       OS Memory           27312.00k
+       Timestamp           03/10/2023 08:52:17 AM
+       Step Count                        638  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     127
+       Page Swaps                        0
+       Voluntary Context Switches        11
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 187        
+ 188        proc sort data=rpt out=rpt_I;
+ 189        by patnum testnm nciabgr ncidir;
+ 190        run;
+ 
+ NOTE: There were 4058 observations read from the data set WORK.RPT.
+ NOTE: The data set WORK.RPT_I has 4058 observations and 16 variables.
+ NOTE: PROCEDURE SORT used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.01 seconds
+       memory              2882.43k
+       OS Memory           28992.00k
+       Timestamp           03/10/2023 08:52:17 AM
+       Step Count                        639  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     356
+       Page Swaps                        0
+       Voluntary Context Switches        9
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           1296
+       
+ 
+ 191        
+ 192        data rpt_II;
+ 193        set rpt_I (drop=bncidir bnciabgr);
+ 194        by patnum testnm nciabgr ncidir;
+ 195        if last.testnm;
+ 196        run;
+ 
+ NOTE: There were 4058 observations read from the data set WORK.RPT_I.
+ NOTE: The data set WORK.RPT_II has 576 observations and 14 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.00 seconds
+       memory              1687.96k
+       OS Memory           27952.00k
+       Timestamp           03/10/2023 08:52:17 AM
+       Step Count                        640  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     211
+       Page Swaps                        0
+       Voluntary Context Switches        11
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 197        
+ 198        data rpt_final;
+ 199        merge rpt_II(in=a) rpt_base_II(in=b);
+ 200        by patnum testnm;
+ 201        if a and b;
+ 202        run;
+ 
+ NOTE: There were 576 observations read from the data set WORK.RPT_II.
+ NOTE: There were 576 observations read from the data set WORK.RPT_BASE_II.
+ NOTE: The data set WORK.RPT_FINAL has 576 observations and 16 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              1443.21k
+       OS Memory           27828.00k
+       Timestamp           03/10/2023 08:52:17 AM
+       Step Count                        641  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     150
+       Page Swaps                        0
+       Voluntary Context Switches        9
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 203        
+ 204        data rpt_final;
+ 205        set rpt_final;
+ 206        if testnm in ('SODIUM', 'K', 'MG') and ncidir='H' then nciabgr='9';
+ 207        if testnm in ('SODIUM', 'K', 'MG') and bncidir='H' then bnciabgr='9';
+ 208        run;
+ 
+ NOTE: There were 576 observations read from the data set WORK.RPT_FINAL.
+ NOTE: The data set WORK.RPT_FINAL has 576 observations and 16 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              1070.71k
+       OS Memory           27568.00k
+       Timestamp           03/10/2023 08:52:17 AM
+       Step Count                        642  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     111
+       Page Swaps                        0
+       Voluntary Context Switches        11
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           272
+       
+ 
+ 209        
+ 210        proc sort data=rpt_final nodupkey out=denom;
+ 211        by patnum trtc testnm bncidir bnciabgr;
+ 212        run;
+ 
+ NOTE: There were 576 observations read from the data set WORK.RPT_FINAL.
+ NOTE: 0 observations with duplicate key values were deleted.
+ NOTE: The data set WORK.DENOM has 576 observations and 16 variables.
+ NOTE: PROCEDURE SORT used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.00 seconds
+       memory              1195.25k
+       OS Memory           27828.00k
+       Timestamp           03/10/2023 08:52:17 AM
+       Step Count                        643  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     130
+       Page Swaps                        0
+       Voluntary Context Switches        11
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           272
+       
+ 
+ 213        
+ 214        proc sort data=rpt_final;
+ 215        by trtc testnm bncidir;
+ 216        run;
+ 
+ NOTE: There were 576 observations read from the data set WORK.RPT_FINAL.
+ NOTE: The data set WORK.RPT_FINAL has 576 observations and 16 variables.
+ NOTE: PROCEDURE SORT used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.01 seconds
+       memory              932.37k
+       OS Memory           27568.00k
+       Timestamp           03/10/2023 08:52:17 AM
+       Step Count                        644  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     98
+       Page Swaps                        0
+       Voluntary Context Switches        9
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 217        
+ 218        proc freq data=rpt_final;
+ 219        table trtc*testnm*bnciabgr*bncidir*nciabgr/out=stats missing list nopercent norow nocol;
+ 220        format trtc trtc.;
+ 221        run;
+ 
+ NOTE: There were 576 observations read from the data set WORK.RPT_FINAL.
+ NOTE: The data set WORK.STATS has 81 observations and 7 variables.
+ NOTE: PROCEDURE FREQ used (Total process time):
+       real time           0.09 seconds
+       user cpu time       0.10 seconds
+       system cpu time     0.00 seconds
+       memory              2048.40k
+       OS Memory           28608.00k
+       Timestamp           03/10/2023 08:52:17 AM
+       Step Count                        645  Switch Count  10
+       Page Faults                       0
+       Page Reclaims                     400
+       Page Swaps                        0
+       Voluntary Context Switches        52
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           1368
+       
+ 
+ 222        
+ 223        proc freq data=denom;
+ 224        table trtc*testnm*bnciabgr*bncidir/out=bign(rename=(count=bign) drop=percent) missing list nopercent norow nocol;
+ 225        format trtc trtc.;
+ 226        run;
+ 
+ NOTE: There were 576 observations read from the data set WORK.DENOM.
+ NOTE: The data set WORK.BIGN has 43 observations and 5 variables.
+ NOTE: PROCEDURE FREQ used (Total process time):
+       real time           0.05 seconds
+       user cpu time       0.05 seconds
+       system cpu time     0.00 seconds
+       memory              1877.37k
+       OS Memory           28608.00k
+       Timestamp           03/10/2023 08:52:17 AM
+       Step Count                        646  Switch Count  10
+       Page Faults                       0
+       Page Reclaims                     399
+       Page Swaps                        0
+       Voluntary Context Switches        56
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           1352
+       
+ 
+ 227        
+ 228        proc sort data=stats nodupkey out=template(keep=trtc testnm bncidir);
+ 229        by trtc testnm bncidir;
+ 230        run;
+ 
+ NOTE: There were 81 observations read from the data set WORK.STATS.
+ NOTE: 58 observations with duplicate key values were deleted.
+ NOTE: The data set WORK.TEMPLATE has 23 observations and 3 variables.
+ NOTE: PROCEDURE SORT used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.00 seconds
+       memory              1196.09k
+       OS Memory           27828.00k
+       Timestamp           03/10/2023 08:52:17 AM
+       Step Count                        647  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     151
+       Page Swaps                        0
+       Voluntary Context Switches        14
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           272
+       
+ 
+ 231        
+ 232        data template;
+ 233        length bnciabgr $ 1;
+ 234        set template;
+ 235        by trtc testnm bncidir;
+ 236        if (testnm in ('SODIUM', 'K', 'MG') and bncidir='L')
+ 237        or testnm in ("ALP","AST","ALT","BILI","BUN","CREAT") then do;
+ 238        bnciabgr='0';
+ 239        output;
+ 240        bnciabgr='1';
+ 241        output;
+ 242        bnciabgr='2';
+ 243        output;
+ 244        bnciabgr='3';
+ 245        output;
+ 246        bnciabgr='4';
+ 247        output;
+ 248        end;
+ 249        else if testnm in ('SODIUM', 'K', 'MG') and bncidir='H' then do;
+ 250        bnciabgr='9';
+ 251        output;
+ 252        end;
+ 253        run;
+ 
+ NOTE: There were 23 observations read from the data set WORK.TEMPLATE.
+ NOTE: The data set WORK.TEMPLATE has 95 observations and 4 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              1270.65k
+       OS Memory           27568.00k
+       Timestamp           03/10/2023 08:52:17 AM
+       Step Count                        648  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     132
+       Page Swaps                        0
+       Voluntary Context Switches        11
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 254        
+ 255        data template;
+ 256        set template;
+ 257        col1=0;
+ 258        col2=0;
+ 259        col3=0;
+ 260        col4=0;
+ 261        col0=0;
+ 262        col9=0;
+ 263        run;
+ 
+ NOTE: There were 95 observations read from the data set WORK.TEMPLATE.
+ NOTE: The data set WORK.TEMPLATE has 95 observations and 10 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              1057.40k
+       OS Memory           27568.00k
+       Timestamp           03/10/2023 08:52:17 AM
+       Step Count                        649  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     127
+       Page Swaps                        0
+       Voluntary Context Switches        11
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 264        
+ 265        proc sort data=template;
+ 266        by trtc testnm bncidir bnciabgr;
+ 267        run;
+ 
+ NOTE: There were 95 observations read from the data set WORK.TEMPLATE.
+ NOTE: The data set WORK.TEMPLATE has 95 observations and 10 variables.
+ NOTE: PROCEDURE SORT used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              928.18k
+       OS Memory           27568.00k
+       Timestamp           03/10/2023 08:52:17 AM
+       Step Count                        650  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     115
+       Page Swaps                        0
+       Voluntary Context Switches        11
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 268        
+ 269        proc sort data=bign;
+ 270        by trtc testnm bncidir bnciabgr;
+ 271        run;
+ 
+ NOTE: There were 43 observations read from the data set WORK.BIGN.
+ NOTE: The data set WORK.BIGN has 43 observations and 5 variables.
+ NOTE: PROCEDURE SORT used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              931.90k
+       OS Memory           27568.00k
+       Timestamp           03/10/2023 08:52:17 AM
+       Step Count                        651  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     118
+       Page Swaps                        0
+       Voluntary Context Switches        9
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 272        
+ 273        proc sort data=stats;
+ 274        by trtc testnm bncidir bnciabgr;
+ 275        run;
+ 
+ NOTE: There were 81 observations read from the data set WORK.STATS.
+ NOTE: The data set WORK.STATS has 81 observations and 7 variables.
+ NOTE: PROCEDURE SORT used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              1042.03k
+       OS Memory           27568.00k
+       Timestamp           03/10/2023 08:52:17 AM
+       Step Count                        652  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     117
+       Page Swaps                        0
+       Voluntary Context Switches        11
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 276        proc print; run;
+ 
+ NOTE: There were 81 observations read from the data set WORK.STATS.
+ NOTE: PROCEDURE PRINT used (Total process time):
+       real time           0.11 seconds
+       user cpu time       0.11 seconds
+       system cpu time     0.00 seconds
+       memory              663.50k
+       OS Memory           27308.00k
+       Timestamp           03/10/2023 08:52:17 AM
+       Step Count                        653  Switch Count  0
+       Page Faults                       0
+       Page Reclaims                     66
+       Page Swaps                        0
+       Voluntary Context Switches        0
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           32
+       
+ 
+ 277        
+ 278        proc transpose data=stats out=stats_trans prefix=col;
+ 279        by trtc testnm bncidir bnciabgr;
+ 280        id nciabgr;
+ 281        var count;
+ 282        run;
+ 
+ NOTE: There were 81 observations read from the data set WORK.STATS.
+ NOTE: The data set WORK.STATS_TRANS has 43 observations and 11 variables.
+ NOTE: PROCEDURE TRANSPOSE used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.00 seconds
+       memory              2825.84k
+       OS Memory           29620.00k
+       Timestamp           03/10/2023 08:52:17 AM
+       Step Count                        654  Switch Count  4
+       Page Faults                       0
+       Page Reclaims                     221
+       Page Swaps                        0
+       Voluntary Context Switches        24
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           536
+       
+ 
+ 283        
+ 284        proc sort data=stats_trans;
+ 285        by trtc testnm bncidir bnciabgr;
+ 286        run;
+ 
+ NOTE: There were 43 observations read from the data set WORK.STATS_TRANS.
+ NOTE: The data set WORK.STATS_TRANS has 43 observations and 11 variables.
+ NOTE: PROCEDURE SORT used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.01 seconds
+       memory              1037.31k
+       OS Memory           27568.00k
+       Timestamp           03/10/2023 08:52:17 AM
+       Step Count                        655  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     116
+       Page Swaps                        0
+       Voluntary Context Switches        11
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 287        
+ 288        
+ 289        data stats_trans_II;
+ 290        length gr0-gr4 gr9 $12;
+ 291        merge template(in=a) stats_trans bign;
+ 292        by trtc testnm bncidir bnciabgr ;
+ 293        if a;
+ 294        if col0 > 0 then gr0=put(col0, 3.)||'('||put(100*col0/bign,5.1)||'%)';
+ 295        else gr0='  '||' (00.0%)';
+ 296        if col1 > 0 then gr1=put(col1, 3.)||'('||put(100*col1/bign,5.1)||'%)';
+ 297        else gr1='  '||' (00.0%)';
+ 298        if col2 > 0 then gr2=put(col2, 3.)||'('||put(100*col2/bign,5.1)||'%)';
+ 299        else gr2='  '||' (00.0%)';
+ 300        if col3 > 0 then gr3=put(col3, 3.)||'('||put(100*col3/bign,5.1)||'%)';
+ 301        else gr3='  '||' (00.0%)';
+ 302        if col4 > 0 then gr4=put(col4, 3.)||'('||put(100*col4/bign,5.1)||'%)';
+ 303        else gr4='  '||' (00.0%)';
+ 304        if col9 > 0 then gr9=put(col9, 3.)||'('||put(100*col9/bign,5.1)||'%)';
+ 305        else gr9='  '||' (00.0%)';
+ 306        if bign=. then bign=0;
+ 307        if bncidir='H' then bncidir="High";
+ 308        else if bncidir="L" then bncidir="Low";
+ 309        
+ 310        testord=input(testnm,$testordf.);
+ 311        drop _name_ _label_;
+ 312        run;
+ 
+ NOTE: There were 95 observations read from the data set WORK.TEMPLATE.
+ NOTE: There were 43 observations read from the data set WORK.STATS_TRANS.
+ NOTE: There were 43 observations read from the data set WORK.BIGN.
+ NOTE: The data set WORK.STATS_TRANS_II has 95 observations and 18 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              2066.29k
+       OS Memory           28344.00k
+       Timestamp           03/10/2023 08:52:17 AM
+       Step Count                        656  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     249
+       Page Swaps                        0
+       Voluntary Context Switches        10
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 313        
+ 314        proc sort data=stats_trans_II;
+ 315        by trtc testord testnm descending bncidir descending bnciabgr ;
+ 316        run;
+ 
+ NOTE: There were 95 observations read from the data set WORK.STATS_TRANS_II.
+ NOTE: The data set WORK.STATS_TRANS_II has 95 observations and 18 variables.
+ NOTE: PROCEDURE SORT used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.00 seconds
+       memory              1044.59k
+       OS Memory           27824.00k
+       Timestamp           03/10/2023 08:52:17 AM
+       Step Count                        657  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     112
+       Page Swaps                        0
+       Voluntary Context Switches        11
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 317        proc print; run;
+ 
+ NOTE: There were 95 observations read from the data set WORK.STATS_TRANS_II.
+ NOTE: PROCEDURE PRINT used (Total process time):
+       real time           0.26 seconds
+       user cpu time       0.26 seconds
+       system cpu time     0.00 seconds
+       memory              797.46k
+       OS Memory           27564.00k
+       Timestamp           03/10/2023 08:52:18 AM
+       Step Count                        658  Switch Count  0
+       Page Faults                       0
+       Page Reclaims                     71
+       Page Swaps                        0
+       Voluntary Context Switches        0
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           112
+       
+ 
+ 318        
+ 319        data final1 (keep=trtc testord testnm bnciabgr bncidir bign gr0 gr1 gr2 gr3 gr4 gr9);
+ 320        set stats_trans_II (where=(trtc=1));
+ 321        run;
+ 
+ NOTE: There were 47 observations read from the data set WORK.STATS_TRANS_II.
+       WHERE trtc=1;
+ NOTE: The data set WORK.FINAL1 has 47 observations and 12 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              972.71k
+       OS Memory           27824.00k
+       Timestamp           03/10/2023 08:52:18 AM
+       Step Count                        659  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     128
+       Page Swaps                        0
+       Voluntary Context Switches        13
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 322        
+ 323        proc report data=final1 nowd headline headskip missing;
+ 324        title6 "Treatment: CMP-135";
+ 325        columns testnm bncidir bnciabgr bign
+ 326        ("Post-Baseline NCI CTCAE Grade / ____________________" gr0 gr1 gr2 gr3 gr4 gr9);
+ 327        define testnm /order order=data "Lab Parameter" format=$testnmf.;
+ 328        define bncidir /order order=data "Lab / Event" format=$ncidirf.;
+ 329        define bnciabgr /order order=data "Baseline / Grade" format=$bncigrf.;
+ 330        define bign / display "N";
+ 331        define gr0 / display "0" center;
+ 332        define gr1 / display "1" center;
+ 333        define gr2 / display "2" center;
+ 334        define gr3 / display "3" center;
+ 335        define gr4 / display "4" center;
+ 336        define gr9 / display "Other (value > ULN)" center;
+ 337        break after testnm / skip;
+ 338        run;
+ 
+ NOTE: There were 47 observations read from the data set WORK.FINAL1.
+ NOTE: PROCEDURE REPORT used (Total process time):
+       real time           0.08 seconds
+       user cpu time       0.08 seconds
+       system cpu time     0.00 seconds
+       memory              7765.31k
+       OS Memory           33728.00k
+       Timestamp           03/10/2023 08:52:18 AM
+       Step Count                        660  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     1683
+       Page Swaps                        0
+       Voluntary Context Switches        29
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           32
+       
+ 
+ 339        
+ 340        proc printto;
+ 341        run;
+ 
+ NOTE: PROCEDURE PRINTTO used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              179.34k
+       OS Memory           28328.00k
+       Timestamp           03/10/2023 08:52:18 AM
+       Step Count                        661  Switch Count  0
+       Page Faults                       0
+       Page Reclaims                     16
+       Page Swaps                        0
+       Voluntary Context Switches        0
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           0
+       
+ 
+ 342        
+ 343        data final2 (keep=trtc testord testnm bnciabgr bncidir bign gr0 gr1 gr2 gr3 gr4 gr9);
+ 344        set stats_trans_II (where=(trtc=0));
+ 345        run;
+ 
+ NOTE: There were 48 observations read from the data set WORK.STATS_TRANS_II.
+       WHERE trtc=0;
+ NOTE: The data set WORK.FINAL2 has 48 observations and 12 variables.
+ NOTE: DATA statement used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.01 seconds
+       system cpu time     0.00 seconds
+       memory              859.43k
+       OS Memory           28848.00k
+       Timestamp           03/10/2023 08:52:18 AM
+       Step Count                        662  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     124
+       Page Swaps                        0
+       Voluntary Context Switches        12
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           264
+       
+ 
+ 346        
+ 347        proc report data=final2 nowd headline headskip missing;
+ 348        title6 "Treatment: Placebo";
+ 349        columns testnm bncidir bnciabgr bign
+ 350        ("Post-Baseline NCI CTCAE Grade / ____________________" gr0 gr1 gr2 gr3 gr4 gr9);
+ 351        define testnm /order order=data "Lab Parameter" format=$testnmf.;
+ 352        define bncidir /order order=data "Lab / Event" format=$ncidirf.;
+ 353        define bnciabgr /order order=data "Baseline / Grade" format=$bncigrf.;
+ 354        define bign / display "N";
+ 355        define gr0 / display "0" center;
+ 356        define gr1 / display "1" center;
+ 357        define gr2 / display "2" center;
+ 358        define gr3 / display "3" center;
+ 359        define gr4 / display "4" center;
+ 360        define gr9 / display "Other (value > ULN)" center;
+ 361        break after testnm / skip;
+ 362        run;
+ 
+ NOTE: There were 48 observations read from the data set WORK.FINAL2.
+ NOTE: PROCEDURE REPORT used (Total process time):
+       real time           0.08 seconds
+       user cpu time       0.08 seconds
+       system cpu time     0.01 seconds
+       memory              7760.20k
+       OS Memory           33728.00k
+       Timestamp           03/10/2023 08:52:18 AM
+       Step Count                        663  Switch Count  2
+       Page Faults                       0
+       Page Reclaims                     1417
+       Page Swaps                        0
+       Voluntary Context Switches        30
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           32
+       
+ 
+ 363        
+ 364        proc printto;
+ 365        run;
+ 
+ NOTE: PROCEDURE PRINTTO used (Total process time):
+       real time           0.00 seconds
+       user cpu time       0.00 seconds
+       system cpu time     0.00 seconds
+       memory              165.56k
+       OS Memory           28328.00k
+       Timestamp           03/10/2023 08:52:18 AM
+       Step Count                        664  Switch Count  0
+       Page Faults                       0
+       Page Reclaims                     15
+       Page Swaps                        0
+       Voluntary Context Switches        0
+       Involuntary Context Switches      0
+       Block Input Operations            0
+       Block Output Operations           0
+       
+ 
+ 366        
+ 367        OPTIONS NONOTES NOSTIMER NOSOURCE NOSYNTAXCHECK;
+ 377        
